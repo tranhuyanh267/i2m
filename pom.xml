@@ -7,6 +7,8 @@
         <module>post-worker</module>
         <module>common</module>
         <module>post-worker</module>
+        <module>username-worker</module>
+        <module>management</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -30,13 +32,13 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-stream</artifactId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
             <version>2.1.4.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
-            <version>2.1.4.RELEASE</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:adminkute@i2m-cluster-dowck.gcp.mongodb.net/i2m?retryWrites=true&w=majority
