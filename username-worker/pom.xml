@@ -11,5 +11,13 @@
 
     <artifactId>username-worker</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.brunocvcunha.instagram4j</groupId>
+            <artifactId>instagram4j</artifactId>
+            <version>1.12</version>
+        </dependency>
+    </dependencies>
+
 
 </project>
