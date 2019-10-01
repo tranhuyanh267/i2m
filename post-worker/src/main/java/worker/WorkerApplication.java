@@ -48,7 +48,6 @@ public class WorkerApplication {
                 log.error("Error while handling " + userId);
             }
         }
-
     }
 
     @EventListener(ApplicationReadyEvent.class)

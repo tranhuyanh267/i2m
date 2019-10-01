@@ -1,4 +1,6 @@
 spring:
-  data:
-    mongodb:
-      uri: mongodb+srv://admin:adminkute@i2m-cluster-dowck.gcp.mongodb.net/i2m?retryWrites=true&w=majority
+  rabbitmq:
+    host: 35.240.130.146
+    port: 30069
+    username: admin
+    password: grove1234
