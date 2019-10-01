@@ -1,4 +1,4 @@
-package usernameworker;
+package usernameworker.configs;
 
 import lombok.extern.log4j.Log4j;
 import org.brunocvcunha.instagram4j.Instagram4j;

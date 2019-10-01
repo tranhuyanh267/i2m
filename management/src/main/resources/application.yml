@@ -1,4 +1,7 @@
 spring:
-  data:
-    mongodb:
-      uri: mongodb+srv://vandt:vannguyen2802@cluster0-j2b8q.mongodb.net/test?retryWrites=true&w=majority
+  rabbitmq:
+    host: 35.240.130.146
+    port: 30069
+    username: admin
+    password: grove1234
+

@@ -4,3 +4,11 @@ spring:
     port: 30069
     username: admin
     password: grove1234
+    listener:
+      simple:
+        prefetch: 1
+      direct:
+        prefetch: 1
+  data:
+    mongodb:
+      uri: mongodb://root:grove1234@35.240.130.146:30068/i2m?authSource=admin

@@ -1,11 +1,12 @@
 package web.entities;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Data
-@Document
+@Entity
 public class Influencer {
     @Id
     private String id;

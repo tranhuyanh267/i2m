@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.handler.annotation.SendTo;
 
 import java.io.IOException;
@@ -18,6 +19,9 @@ public class UserNameWorkerApplication {
 
     @Autowired
     private Instagram4j instagram4j;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public static void main(String[] args) {
         SpringApplication.run(UserNameWorkerApplication.class, args);
@@ -30,6 +34,7 @@ public class UserNameWorkerApplication {
             log.info("doing handleUsername " + username);
             InstagramSearchUsernameRequest request = new InstagramSearchUsernameRequest(username);
             InstagramSearchUsernameResult result = instagram4j.sendRequest(request);
+            mongoTemplate.save(result.getUser());
             return result.getUser().getPk();
         } catch (IOException e) {
             log.error("error handleUsername " + username);
