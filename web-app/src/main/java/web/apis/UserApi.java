@@ -1,28 +1,44 @@
 package web.apis;
 
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import web.entities.User;
-import web.services.UserService;
+import web.exceptions.WebAppException;
+import web.repositories.UserRepository;
+import web.security.CurrentUser;
+import web.security.UserPrincipal;
 
-@AllArgsConstructor
-@RestController("api/users")
+@RestController
+@RequestMapping("api/users")
 public class UserApi {
+    @Autowired
+    private UserRepository userRepository;
 
-    private UserService userService;
+//    private UserService userService;
+//
+//    @GetMapping("self")
+//    public User getUserProfile() {
+//        return this.userService.getCurrentUserProfile();
+//    }
+//
+//    @PostMapping("register")
+//    public void register(@RequestBody() User user) {
+//        this.userService.register(user);
+//    }
+//
+//    @PutMapping("self")
+//    public void update() {
+//
+//    }
 
-    @GetMapping("self")
-    public User getUserProfile() {
-        return this.userService.getCurrentUserProfile();
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
+    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+        return userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new WebAppException("User id not found " + userPrincipal.getId()));
     }
 
-    @PostMapping("register")
-    public void register(@RequestBody() User user) {
-        this.userService.register(user);
-    }
-
-    @PutMapping("self")
-    public void update() {
-
-    }
 }

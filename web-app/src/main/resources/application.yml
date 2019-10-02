@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:mysql://35.240.134.127:3306/i2m
+    username: root
+    password: 123
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 1005899067433-ds5s95msob2pm8pl6lfu7ajarivflgdd.apps.googleusercontent.com
+            clientSecret: jqyzZxCEWD4rSLd79qibAK9w
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    time-zone: UTC
+app:
+  jwtSecret: 926D96C90030DD58429D2751AC1BDBBC
+  jwtExpirationInMs: 864000000
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    authorizedRedirectUris:
+      - http://localhost:3000
