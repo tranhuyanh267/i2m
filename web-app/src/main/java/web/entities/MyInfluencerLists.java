@@ -1,5 +1,6 @@
 package web.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -15,9 +16,22 @@ public class MyInfluencerLists {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    public MyInfluencerLists() {
+    }
+
+    public MyInfluencerLists(String name) {
+        this.name = name;
+    }
+
+    public MyInfluencerLists(String name, User user) {
+        this.name = name;
+        this.user = user;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
     public Long getId() {
