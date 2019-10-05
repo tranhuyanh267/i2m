@@ -1,7 +1,11 @@
 package web.payload;
 
+import web.entities.Category;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class SignUpRequest {
@@ -14,6 +18,8 @@ public class SignUpRequest {
 
     @NotBlank
     private String password;
+    private Set<Category> category = new HashSet<>();
+
 
     public String getName() {
         return name;
@@ -37,5 +43,13 @@ public class SignUpRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Category> getCategory() {
+        return category;
+    }
+
+    public void setCategory(Set<Category> category) {
+        this.category = category;
     }
 }

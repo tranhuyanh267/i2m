@@ -95,4 +95,11 @@ public class User extends DateAudit{
         this.roles = roles;
     }
 
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
 }

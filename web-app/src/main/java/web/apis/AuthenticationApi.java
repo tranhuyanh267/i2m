@@ -7,11 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import web.entities.Category;
 import web.entities.Role;
 import web.entities.RoleName;
 import web.entities.User;
@@ -19,6 +17,7 @@ import web.exceptions.WebApiReponse;
 import web.exceptions.WebAppException;
 import web.payload.LoginRequest;
 import web.payload.SignUpRequest;
+import web.repositories.CategoryRepository;
 import web.repositories.RoleRepository;
 import web.repositories.UserRepository;
 import web.security.JwtTokenProvider;
@@ -26,6 +25,7 @@ import web.security.JwtTokenProvider;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,6 +41,8 @@ public class AuthenticationApi {
     private JwtTokenProvider tokenProvider;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -53,13 +55,13 @@ public class AuthenticationApi {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new WebApiReponse(true, token));
+        return ResponseEntity.ok(new WebApiReponse(token));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new WebAppException("Email address already in use.");
+            return ResponseEntity.ok(new WebApiReponse(false, "Email address already in use."));
         }
 
         // Creating user's account
@@ -73,6 +75,9 @@ public class AuthenticationApi {
                 .orElseThrow(() -> new WebAppException("User Role not set."));
         user.setRoles(Collections.singleton(role));
         user.setActivated(true);
+        //set category
+        user.setCategories(signUpRequest.getCategory());
+
         User result = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
@@ -81,5 +86,10 @@ public class AuthenticationApi {
 
         return ResponseEntity.created(location)
                 .body(new WebApiReponse(true, "User registered successfully@"));
+    }
+
+    @GetMapping("/category")
+    public List<Category> getCategory() {
+        return categoryRepository.findAll();
     }
 }
