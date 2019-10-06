@@ -5,6 +5,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "myInfluencerLists")
@@ -34,6 +36,10 @@ public class MyInfluencerLists {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "influencer_myList", joinColumns = @JoinColumn(name = "listId"), inverseJoinColumns = @JoinColumn(name = "influencerId"))
+    private Set<Influencers> influencers = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -56,5 +62,13 @@ public class MyInfluencerLists {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Influencers> getInfluencers() {
+        return influencers;
+    }
+
+    public void setInfluencers(Set<Influencers> influencers) {
+        this.influencers = influencers;
     }
 }
