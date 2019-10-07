@@ -9,16 +9,13 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import web.constants.RoleName;
 import web.entities.Role;
-import web.entities.RoleName;
 import web.entities.User;
 import web.exceptions.OAuth2AuthenticationProcessingException;
-import web.exceptions.WebAppException;
-import web.repositories.RoleRepository;
 import web.repositories.UserRepository;
 import web.security.UserPrincipal;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -26,8 +23,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -52,12 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
         User user;
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-        } else {
-            user = registerNewUser(oAuth2UserInfo);
-
-        }
+        user = userOptional.orElseGet(() -> registerNewUser(oAuth2UserInfo));
         return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
 
@@ -66,10 +56,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setFullName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setImgUrl(oAuth2UserInfo.getImageUrl());
-        Role role = roleRepository.findByName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new WebAppException("User Role not set."));
-        user.setRoles(Collections.singleton(role));
-        user.setActivated(true);
+        user.setActive(true);
+        user.setRole(new Role(RoleName.USER_ROLE));
         return userRepository.save(user);
     }
 }

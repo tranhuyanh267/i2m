@@ -1,12 +1,12 @@
 package management.repos;
 
-import management.documents.Influencer;
+import management.documents.TrackingUsername;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface InfluencerRepo extends CrudRepository<Influencer, String> {
-    List<Influencer> findAll();
+public interface TrackingInfluencerRepo extends CrudRepository<TrackingUsername, String> {
+    List<TrackingUsername> findAll();
 }

@@ -6,4 +6,4 @@ spring:
     password: grove1234
   data:
     mongodb:
-      uri: mongodb://root:grove1234@35.240.130.146:30068/i2m?authSource=admin
+      uri: mongodb://35.240.134.127:27017/i2m?authSource=admin

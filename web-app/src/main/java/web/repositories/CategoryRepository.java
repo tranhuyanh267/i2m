@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import web.entities.Category;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category,Long> {
+public interface CategoryRepository extends JpaRepository<Category,String> {
 }

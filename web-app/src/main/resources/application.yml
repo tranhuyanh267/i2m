@@ -4,13 +4,18 @@ spring:
     username: root
     password: 123
 
+  rabbitmq:
+    host: 35.240.130.146
+    port: 30069
+    username: admin
+    password: grove1234
+
   jpa:
-    show-sql: false
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
+
   security:
     oauth2:
       client:
@@ -32,6 +37,6 @@ app:
   oauth2:
     # After successfully authenticating with the OAuth2 Provider,
     # we'll be generating an auth token for the user and sending the token to the
-    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    # AppPropertiesredirectUri mentioned by the client in the /oauth2/authorize request.
     authorizedRedirectUris:
       - http://localhost:3000

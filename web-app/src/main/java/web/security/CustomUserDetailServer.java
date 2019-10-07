@@ -25,7 +25,7 @@ public class CustomUserDetailServer implements UserDetailsService {
     }
 
     @Transactional
-    public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
+    public UserDetails loadUserById(String id) throws UsernameNotFoundException {
         User user = repository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
         return UserPrincipal.create(user);
