@@ -43,6 +43,10 @@ public class PackService {
         return null;
     }
 
+    public Pack findById(String id) {
+        return this.packRepository.findById(id).orElse(null);
+    }
+
     public void delete(String id) {
         this.packRepository.deleteById(id);
     }

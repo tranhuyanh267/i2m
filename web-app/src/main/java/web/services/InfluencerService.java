@@ -18,7 +18,7 @@ public class InfluencerService {
     public Influencer addInfluencerToPack(String influencerId, String packId) {
         Optional<Influencer> influencerOpt = influencerRepository.findById(influencerId);
         if (influencerOpt.isPresent()) {
-            Pack pack = packService.getDetails(packId);
+            Pack pack = packService.findById(packId);
             if (pack != null) {
                 Influencer influencer = influencerOpt.get();
                 influencer.addPack(pack);
