@@ -35,5 +35,4 @@ public class UserApi {
         return this.packService.getUserPacks(userPrincipal.getId());
     }
 
-
 }

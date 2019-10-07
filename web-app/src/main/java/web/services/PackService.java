@@ -17,6 +17,10 @@ public class PackService {
     public List<Pack> getUserPacks(String userId) {
         return this.packRepository.findByUserId(userId).stream().map(item -> {
             item.setUser(null);
+            item.getInfluencers().forEach(i -> {
+                i.setPosts(null);
+                i.setPacks(null);
+            });
             return item;
         }).collect(Collectors.toList());
     }
