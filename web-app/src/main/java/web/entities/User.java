@@ -23,7 +23,7 @@ public class User {
     private boolean isActive;
     private String imgUrl;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Role role;
 
 }
