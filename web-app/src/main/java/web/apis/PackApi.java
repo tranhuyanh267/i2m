@@ -21,7 +21,6 @@ public class PackApi {
         Pack details = this.packService.getDetails(id);
         details.getInfluencers().forEach(in -> {
             in.setPosts(null);
-            in.setPacks(null);
         });
         return details;
     }

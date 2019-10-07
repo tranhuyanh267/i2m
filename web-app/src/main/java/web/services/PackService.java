@@ -19,7 +19,6 @@ public class PackService {
             item.setUser(null);
             item.getInfluencers().forEach(i -> {
                 i.setPosts(null);
-                i.setPacks(null);
             });
             return item;
         }).collect(Collectors.toList());

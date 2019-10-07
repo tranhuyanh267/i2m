@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import web.entities.Influencer;
 import web.entities.Pack;
 import web.repositories.InfluencerRepository;
+import web.repositories.PackRepository;
 
 import java.util.Optional;
 
@@ -13,16 +14,19 @@ import java.util.Optional;
 public class InfluencerService {
 
     private InfluencerRepository influencerRepository;
+    private PackRepository packRepository;
     private PackService packService;
 
     public Influencer addInfluencerToPack(String influencerId, String packId) {
+        Pack pack = packService.findById(packId);
         Optional<Influencer> influencerOpt = influencerRepository.findById(influencerId);
+
         if (influencerOpt.isPresent()) {
-            Pack pack = packService.findById(packId);
             if (pack != null) {
                 Influencer influencer = influencerOpt.get();
-                influencer.addPack(pack);
-                influencerRepository.save(influencer);
+                pack.getInfluencers().add(influencer);
+                pack.setInfluencers(pack.getInfluencers());
+                packRepository.save(pack);
             }
         }
         return null;

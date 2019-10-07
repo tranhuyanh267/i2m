@@ -1,6 +1,7 @@
 package web.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.ToString;
 
@@ -31,17 +32,12 @@ public class Influencer {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_category", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Set<Category> categories = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "influencer")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Post> posts = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "influencer_pack", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "pack_id"))
-    private List<Pack> packs = new ArrayList<>();
-
-    public void addPack(Pack pack) {
-        this.getPacks().add(pack);
-    }
 
 }
