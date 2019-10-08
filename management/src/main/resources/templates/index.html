@@ -9,5 +9,9 @@
 <form action="#" th:action="@{/index}" method="post">
     <p><input type="submit" value="Start Crawling"/></p>
 </form>
+
+<ul th:each="influencer: ${influencers}">
+    <li th:text="${influencer.username}" />
+</ul>
 </body>
 </html>
