@@ -39,7 +39,9 @@ public class WorkerApplication {
         log.info("Handling " + instagramUserPayload.getUserId());
         InstagramUserFeedRequest request = new InstagramUserFeedRequest(Long.valueOf(instagramUserPayload.getUserId()));
         InstagramFeedResult result = instagram4j.sendRequest(request);
-        instagramUserPayload.setPosts(result.getItems().stream().map(this::transform).collect(Collectors.toList()));
+        if (result.getItems() != null) {
+            instagramUserPayload.setPosts(result.getItems().stream().map(this::transform).collect(Collectors.toList()));
+        }
         return instagramUserPayload;
     }
 

@@ -48,7 +48,7 @@ public class ManagementApplication implements ApplicationRunner {
             return instagramUserPayload;
         }).collect(Collectors.toList());
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 201; i < 5000; i++) {
             rabbitTemplate.convertAndSend(QueueName.USER_NAME_QUEUE, instagrams.get(i));
         }
 
