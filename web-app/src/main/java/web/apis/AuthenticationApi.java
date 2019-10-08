@@ -65,7 +65,7 @@ public class AuthenticationApi {
         User result = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/users/me")
+                .fromCurrentContextPath().path("/users/self")
                 .buildAndExpand(result.getId()).toUri();
 
         return ResponseEntity.created(location)
