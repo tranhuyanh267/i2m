@@ -44,8 +44,8 @@ public class UserNameWorkerApplication {
 
     InstagramUserPayload transform(InstagramUserPayload payload, InstagramUser instagramUser) {
         payload.setUserId(String.valueOf(instagramUser.getPk()));
-        payload.setFollowings(String.valueOf(instagramUser.getFollowing_count()));
-        payload.setFollowers(String.valueOf(instagramUser.getFollower_count()));
+        payload.setFollowings(instagramUser.getFollowing_count());
+        payload.setFollowers(instagramUser.getFollower_count());
         payload.setEmail(instagramUser.getPublic_email());
         payload.setBiography(instagramUser.getBiography());
         payload.setFullName(instagramUser.getFull_name());

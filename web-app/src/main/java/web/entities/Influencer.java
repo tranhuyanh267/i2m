@@ -21,8 +21,8 @@ public class Influencer {
     private String username;
     private String fullName;
     private String biography;
-    private String followers;
-    private String followings;
+    private int followers;
+    private int followings;
     private int mediaCount;
     private String profilePicUrl;
     private String email;

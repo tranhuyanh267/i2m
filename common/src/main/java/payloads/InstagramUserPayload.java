@@ -15,8 +15,8 @@ public class InstagramUserPayload {
     private List<String> categories;
     private String fullName;
     private String biography;
-    private String followers;
-    private String followings;
+    private int followers;
+    private int followings;
     private int mediaCount;
     private String profilePicUrl;
     private String email;
