@@ -3,6 +3,7 @@ spring:
     url: jdbc:mysql://35.240.134.127:3306/i2m
     username: root
     password: 123
+    sqlScriptEncoding: UTF-8
 
   rabbitmq:
     host: 35.240.130.146

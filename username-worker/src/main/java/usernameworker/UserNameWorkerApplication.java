@@ -36,7 +36,10 @@ public class UserNameWorkerApplication {
         InstagramSearchUsernameRequest request = new InstagramSearchUsernameRequest(payload.getUsername());
         InstagramSearchUsernameResult result = instagram4j.sendRequest(request);
         InstagramUser instagramUser = result.getUser();
-        return transform(payload, instagramUser);
+        if (instagramUser != null) {
+            return transform(payload, instagramUser);
+        }
+        return null;
     }
 
     InstagramUserPayload transform(InstagramUserPayload payload, InstagramUser instagramUser) {

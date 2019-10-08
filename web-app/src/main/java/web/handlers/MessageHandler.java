@@ -30,14 +30,16 @@ public class MessageHandler {
         influencerRepository.save(influencer);
 
 
-        List<Post> posts = payload.getPosts().stream().map(post -> {
-            Post p = new Post();
-            BeanUtils.copyProperties(post, p);
-            p.setInfluencer(influencer);
-            return p;
-        }).collect(Collectors.toList());
+        if (payload .getPosts() != null) {
+            List<Post> posts = payload.getPosts().stream().map(post -> {
+                Post p = new Post();
+                BeanUtils.copyProperties(post, p);
+                p.setInfluencer(influencer);
+                return p;
+            }).collect(Collectors.toList());
+            postRepository.saveAll(posts);
+        }
 
-        postRepository.saveAll(posts);
     }
 
 }
