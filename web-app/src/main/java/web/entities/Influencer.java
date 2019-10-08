@@ -20,12 +20,18 @@ public class Influencer {
     private String id;
     private String username;
     private String fullName;
+
+    @Lob
     private String biography;
     private int followers;
     private int followings;
     private int mediaCount;
+
+    @Lob
     private String profilePicUrl;
     private String email;
+
+    @Lob
     private String externalUrl;
     private boolean isVerified;
     private float engagement;
