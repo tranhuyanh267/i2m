@@ -4,6 +4,3 @@ spring:
     port: 30069
     username: admin
     password: grove1234
-  data:
-    mongodb:
-      uri: mongodb://35.240.134.127:27017/i2m?authSource=admin
