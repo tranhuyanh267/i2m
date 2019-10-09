@@ -27,8 +27,9 @@ public class InfluencerApi {
 
     @GetMapping
     public PagedResponse<Influencer> getInfluencers(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "followers");
+                                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
+                                                    @RequestParam(value = "sortBy", defaultValue = "followers") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, sortBy);
         Page<Influencer> infulenerLists = influencerRepository.findAll(pageable);
         List<Influencer> result = infulenerLists.getContent().stream().map(item -> {
             item.setPosts(null);
