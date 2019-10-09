@@ -39,7 +39,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
 
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority(RoleName.USER_ROLE));
+                singletonList(new SimpleGrantedAuthority(RoleName.USER_ROLE.toString()));
 
         return new UserPrincipal(
                 user.getId(),
