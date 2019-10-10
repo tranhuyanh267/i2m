@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import web.dtos.PackDto;
 import web.entities.Pack;
 import web.entities.User;
+import web.payload.DeleteInfluencerRequest;
 import web.security.CurrentUser;
 import web.security.UserPrincipal;
 import web.services.PackService;
@@ -42,8 +43,14 @@ public class PackApi {
         return this.packService.update(id, pack);
     }
 
+    @PostMapping("{id}")
+    public Pack removeAnInfluencer(@PathVariable("id") String id, @RequestBody DeleteInfluencerRequest request) {
+        return this.packService.removeAnInfluencer(id, request.getInfluencerId());
+    }
+
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") String id) {
         this.packService.delete(id);
     }
+
 }

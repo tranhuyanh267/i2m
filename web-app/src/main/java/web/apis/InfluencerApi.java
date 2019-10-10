@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import reactor.util.annotation.Nullable;
 import web.constants.AppConstants;
 import web.entities.Influencer;
 import web.exceptions.WebAppException;
@@ -28,9 +29,10 @@ public class InfluencerApi {
     @GetMapping
     public PagedResponse<Influencer> getInfluencers(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
-                                                    @RequestParam(value = "sortBy", defaultValue = "followers") String sortBy) {
+                                                    @RequestParam(value = "sortBy", defaultValue = "followers") String sortBy,
+                                                    @RequestParam(value = "search", defaultValue = "") String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, sortBy);
-        Page<Influencer> infulenerLists = influencerRepository.findAll(pageable);
+        Page<Influencer> infulenerLists = influencerRepository.findByUsernameAndFullName(search, pageable);
         List<Influencer> result = infulenerLists.getContent().stream().map(item -> {
             item.setPosts(null);
             return item;
