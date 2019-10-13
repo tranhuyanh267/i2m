@@ -4,7 +4,6 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>web-app</module>
-        <module>post-worker</module>
         <module>common</module>
         <module>post-worker</module>
         <module>username-worker</module>

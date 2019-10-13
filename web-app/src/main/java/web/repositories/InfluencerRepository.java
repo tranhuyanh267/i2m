@@ -12,6 +12,11 @@ import web.entities.Influencer;
 @Repository
 public interface InfluencerRepository extends JpaRepository<Influencer, String> {
 
+    @Query("select v from Influencer v where (v.followers between :minFollowers and :maxFollowers) and (v.engagement between :minEngagement and :maxEngagement) and (v.username like %:search% or v.fullName like %:search%)")
+    Page<Influencer> filterInfluencer(@Param("search") String username, @Param("minFollowers") int minFollowers,
+                                               @Param("maxFollowers") int maxFollowers, @Param("minEngagement") float minEngagement, @Param("maxEngagement") float maxEngagement,Pageable pageable);
+
     @Query("select v from Influencer v where v.username like %:search% or v.fullName like %:search%")
     Page<Influencer> findByUsernameAndFullName(@Param("search") String username, Pageable pageable);
+    
 }
