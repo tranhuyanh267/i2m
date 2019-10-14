@@ -37,4 +37,6 @@ public class Pack {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_pack", joinColumns = @JoinColumn(name = "pack_id"), inverseJoinColumns = @JoinColumn(name = "influencer_id"))
     private Set<Influencer> influencers = new HashSet<>();
+
+
 }
