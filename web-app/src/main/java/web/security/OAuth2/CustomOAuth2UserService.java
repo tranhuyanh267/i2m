@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import web.constants.RoleName;
-import web.entities.Role;
 import web.entities.User;
 import web.exceptions.OAuth2AuthenticationProcessingException;
 import web.repositories.UserRepository;
@@ -57,7 +56,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setImgUrl(oAuth2UserInfo.getImageUrl());
         user.setActive(true);
-        user.setRole(new Role(RoleName.USER_ROLE));
+        user.setRole(RoleName.USER_ROLE);
         return userRepository.save(user);
     }
 }

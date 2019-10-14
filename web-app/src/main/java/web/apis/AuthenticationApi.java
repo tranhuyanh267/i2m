@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import web.constants.RoleName;
-import web.entities.Role;
 import web.entities.User;
 import web.exceptions.WebApiReponse;
 import web.payload.LoginRequest;
@@ -59,7 +58,7 @@ public class AuthenticationApi {
         user.setFullName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(signUpRequest.getPassword());
-        user.setRole(new Role(RoleName.USER_ROLE));
+        user.setRole(RoleName.USER_ROLE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User result = userRepository.save(user);

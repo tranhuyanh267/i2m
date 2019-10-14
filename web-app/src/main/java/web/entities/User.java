@@ -2,6 +2,7 @@ package web.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import web.constants.RoleName;
 
 import javax.persistence.*;
 
@@ -22,8 +23,7 @@ public class User {
     private String password;
     private boolean isActive;
     private String imgUrl;
-
-    @OneToOne(cascade = CascadeType.MERGE)
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    private RoleName role;
 
 }

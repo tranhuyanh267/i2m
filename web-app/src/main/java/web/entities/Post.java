@@ -32,7 +32,7 @@ public class Post {
     private int viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "infuencer_id")
+    @JoinColumn(name = "influencer_id")
     private Influencer influencer;
 
 }

@@ -1,0 +1,15 @@
+spring:
+  rabbitmq:
+    host: 35.240.130.146
+    port: 30069
+    username: admin
+    password: grove1234
+    listener:
+      simple:
+        prefetch: 5
+
+  datasource:
+    url: jdbc:mysql://35.240.134.127:3306/i2m
+    username: root
+    password: 123
+    sqlScriptEncoding: UTF-8
