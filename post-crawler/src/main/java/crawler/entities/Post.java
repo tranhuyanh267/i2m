@@ -19,7 +19,7 @@ public class Post {
     private String thumbnailUrl;
     private boolean isVideo;
     private int viewCount;
-    @Column(name = "infuencer_id")
+    @Column(name = "influencer_id")
     private String influencerId;
 }
 

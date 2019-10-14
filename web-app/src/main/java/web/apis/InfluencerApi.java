@@ -1,9 +1,12 @@
 package web.apis;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
-import reactor.util.annotation.Nullable;
 import web.constants.AppConstants;
 import web.entities.Influencer;
 import web.exceptions.WebAppException;
@@ -28,14 +31,14 @@ public class InfluencerApi {
                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
                                                     @RequestParam(value = "sortBy", defaultValue = "followers") String sortBy,
                                                     @RequestParam(value = "search", defaultValue = "") String search,
-                                                    @Nullable  @RequestParam(value = "minFollowers") Integer minFollowers,
+                                                    @Nullable @RequestParam(value = "minFollowers") Integer minFollowers,
                                                     @Nullable @RequestParam(value = "maxFollowers") Integer maxFollowers,
                                                     @Nullable @RequestParam(value = "minEngagement") Float minEngagement,
                                                     @Nullable @RequestParam(value = "maxEngagement") Float maxEngagement
-                                                    ) {
+    ) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, sortBy);
 
-        if(maxFollowers == null || minFollowers == null || minEngagement == null || maxEngagement == null) {
+        if (maxFollowers == null || minFollowers == null || minEngagement == null || maxEngagement == null) {
             Page<Influencer> infulenerLists = influencerRepository.findByUsernameAndFullName(search, pageable);
             return normalizeResponse(infulenerLists);
         }
@@ -59,10 +62,10 @@ public class InfluencerApi {
         return this.influencerService.addInfluencerToPack(influencerId, influencerMyListRequest.getPackId());
     }
 
-    @GetMapping("/max-followers")
-    public Integer findMaxFollowers() {
-        return influencerRepository.findTopByOrderByFollowersDesc().getFollowers();
-    }
+//    @GetMapping("/max-followers")
+//    public Integer findMaxFollowers() {
+//        return influencerRepository.findTopByOrderByFollowersDesc().getFollowers();
+//    }
 
     private PagedResponse<Influencer> normalizeResponse(Page<Influencer> infulenerLists) {
         List<Influencer> result = infulenerLists.getContent().stream().map(item -> {

@@ -4,6 +4,7 @@ import common.constants.QueueName;
 import common.events.InfluencerCreatedEvent;
 import common.events.UsernameCreatedEvent;
 import crawler.core.EventBus;
+import crawler.entities.Category;
 import crawler.entities.Influencer;
 import crawler.repositories.InfluencerRepository;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,9 @@ import org.brunocvcunha.instagram4j.requests.payload.InstagramUser;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -34,6 +38,9 @@ public class UsernameCreatedHandler {
             InstagramUser instagramUser = result.getUser();
             if (instagramUser != null) {
                 Influencer influencer = transform(instagramUser);
+                String categoryId = getCategoryId(event.getCategory());
+                String categoryName = getCategoryName(event.getCategory());
+                influencer.addCategory(new Category(categoryId, categoryName));
                 influencerRepository.save(influencer);
 
                 InfluencerCreatedEvent influencerCreatedEvent = new InfluencerCreatedEvent();
@@ -60,4 +67,16 @@ public class UsernameCreatedHandler {
         influencer.setExternalUrl(instagramUser.getExternal_url());
         return influencer;
     }
+
+    private String getCategoryName(String category) {
+        return Arrays.stream(category.split("\\-"))
+                .filter(s -> !s.equals("influencers"))
+                .map(s -> Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase() + " ")
+                .collect(Collectors.joining());
+    }
+
+    private String getCategoryId(String category) {
+        return category.replace("-influencers", "");
+    }
+
 }
