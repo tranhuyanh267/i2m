@@ -59,10 +59,6 @@ public class InfluencerApi {
         return this.influencerService.addInfluencerToPack(influencerId, influencerMyListRequest.getPackId());
     }
 
-    @GetMapping("/max-followers")
-    public Integer findMaxFollowers() {
-        return influencerRepository.findTopByOrderByFollowersDesc().getFollowers();
-    }
 
     private PagedResponse<Influencer> normalizeResponse(Page<Influencer> infulenerLists) {
         List<Influencer> result = infulenerLists.getContent().stream().map(item -> {
