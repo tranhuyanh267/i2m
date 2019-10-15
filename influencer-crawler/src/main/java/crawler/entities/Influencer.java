@@ -28,6 +28,8 @@ public class Influencer {
     private String email;
     private boolean isVerified;
     private String externalUrl;
+    private boolean hasAnonymousProfilePicture;
+    private int userTagCount;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,

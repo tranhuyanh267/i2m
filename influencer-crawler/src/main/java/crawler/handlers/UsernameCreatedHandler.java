@@ -87,6 +87,8 @@ public class UsernameCreatedHandler {
         influencer.setVerified(instagramUser.is_verified());
         influencer.setProfilePicUrl(instagramUser.getProfile_pic_url());
         influencer.setExternalUrl(instagramUser.getExternal_url());
+        influencer.setHasAnonymousProfilePicture(instagramUser.isHas_anonymous_profile_picture());
+        influencer.setUserTagCount(instagramUser.getUsertags_count());
         return influencer;
     }
 

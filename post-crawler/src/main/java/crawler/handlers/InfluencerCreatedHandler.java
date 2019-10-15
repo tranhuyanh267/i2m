@@ -4,6 +4,7 @@ import common.constants.QueueName;
 import common.events.InfluencerCreatedEvent;
 import crawler.entities.Post;
 import crawler.repositories.PostRepository;
+import crawler.utils.Transform;
 import lombok.AllArgsConstructor;
 import org.brunocvcunha.instagram4j.Instagram4j;
 import org.brunocvcunha.instagram4j.requests.InstagramUserFeedRequest;
@@ -38,32 +39,7 @@ public class InfluencerCreatedHandler {
     }
 
     List<Post> transformToEntities(List<InstagramFeedItem> items, String influencerId) {
-        return items.stream().map(item -> {
-            try {
-                Post post = new Post();
-                post.setId(item.getId() + "-1");
-                post.setInfluencerId(influencerId);
-                post.setCommentCount(item.getComment_count());
-                post.setLikeCount(item.getLike_count());
-                if (item.getCaption() != null) {
-                    post.setContent(item.getCaption().getText());
-                }
-                post.setCode(item.getCode());
-                post.setViewCount(item.getView_count());
-                post.setVideo(item.isHas_audio());
-                post.setType("LATEST");
-
-                if (item.getImage_versions2() != null) {
-                    post.setThumbnailUrl(item.getImage_versions2().getCandidates().get(0).getUrl());
-                } else {
-                    post.setThumbnailUrl(item.getCarousel_media().get(0).getImage_versions2().getCandidates().get(0).getUrl());
-                }
-
-                return post;
-            } catch (Exception ex) {
-                return null;
-            }
-        }).collect(Collectors.toList());
+        return items.stream().map(item -> Transform.transform(item, "-1", "LATEST", influencerId)).collect(Collectors.toList());
     }
 
 }
