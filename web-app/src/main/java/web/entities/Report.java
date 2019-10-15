@@ -2,10 +2,7 @@ package web.entities;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -20,7 +17,8 @@ public class Report {
     private int followers;
     private int engagement;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "influencer_id")
     private Influencer influencer;
     private String type;
     private Date createdDate;

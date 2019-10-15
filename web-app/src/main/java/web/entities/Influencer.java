@@ -45,7 +45,11 @@ public class Influencer {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany()
+    @OneToMany(
+            mappedBy = "influencer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<Report> reports = new HashSet<>();
 
 
