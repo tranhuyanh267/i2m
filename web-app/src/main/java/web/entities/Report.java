@@ -1,11 +1,13 @@
 package web.entities;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Data
 public class Report {
     @Id
     @GeneratedValue(generator = "UUID")
