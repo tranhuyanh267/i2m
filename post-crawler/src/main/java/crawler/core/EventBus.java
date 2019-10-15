@@ -11,6 +11,6 @@ public class EventBus {
     private RabbitTemplate rabbitTemplate;
 
     public void emit(Event event) {
-        rabbitTemplate.convertAndSend("input-exchange", event.getClass().getSimpleName(), event);
+        rabbitTemplate.convertAndSend("input-exchange", "influencerEngagementCalculated", event);
     }
 }

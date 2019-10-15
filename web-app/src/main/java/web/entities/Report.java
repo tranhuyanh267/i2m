@@ -1,17 +1,14 @@
 package web.entities;
 
 import lombok.Data;
-import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
-@Data
 @Entity
-@Table
-@ToString
-public class Post {
-
+@Data
+public class Report {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -19,21 +16,12 @@ public class Post {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private String id;
-    private String code;
-    private int commentCount;
-    private int likeCount;
-
-    @Lob
-    private String content;
-
-    @Lob
-    private String thumbnailUrl;
-    private boolean isVideo;
-    private int viewCount;
-    private String type;
+    private int followers;
+    private int engagement;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "influencer_id")
     private Influencer influencer;
-
+    private String type;
+    private Date createdDate;
 }

@@ -35,6 +35,8 @@ public class Influencer {
     private String externalUrl;
     private boolean isVerified;
     private float engagement;
+    private int userTagCount;
+    private boolean hasAnonymousProfilePicture;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_category", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -44,6 +46,13 @@ public class Influencer {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "influencer")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "influencer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Report> reports = new HashSet<>();
 
 
 }

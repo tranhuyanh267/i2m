@@ -1,7 +1,9 @@
 package crawler.entities;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -10,6 +12,8 @@ import java.util.Set;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Influencer {
     @Id
     private String id;
@@ -24,6 +28,8 @@ public class Influencer {
     private String email;
     private boolean isVerified;
     private String externalUrl;
+    private boolean hasAnonymousProfilePicture;
+    private int userTagCount;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
