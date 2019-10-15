@@ -10,7 +10,6 @@ import org.brunocvcunha.instagram4j.requests.InstagramUserFeedRequest;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedItem;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedResult;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class InfluencerCreatedHandler {
     private Instagram4j instagram4j;
     private PostRepository postRepository;
 
-    @RabbitListener(queues = QueueName.INFLUENCER_QUEUE)
+    @RabbitListener(queues = QueueName.INFLUENCER_WAITING_TO_FETCH_LATEST_POST_QUEUE)
     public void handler(InfluencerCreatedEvent event) {
         try {
             InstagramUserFeedRequest request = new InstagramUserFeedRequest(Long.valueOf(event.getInfluencerId()));

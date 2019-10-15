@@ -2,13 +2,15 @@ package common.events;
 
 public class InfluencerCreatedEvent extends Event {
     private String influencerId;
+    private int followers;
 
     public InfluencerCreatedEvent() {
 
     }
 
-    public InfluencerCreatedEvent(String influencerId) {
+    public InfluencerCreatedEvent(String influencerId, int followers) {
         this.influencerId = influencerId;
+        this.followers = followers;
     }
 
     public String getInfluencerId() {
@@ -17,5 +19,13 @@ public class InfluencerCreatedEvent extends Event {
 
     public void setInfluencerId(String influencerId) {
         this.influencerId = influencerId;
+    }
+
+    public int getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
     }
 }

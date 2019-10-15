@@ -53,6 +53,7 @@ public class UsernameCreatedHandler {
 
                 InfluencerCreatedEvent influencerCreatedEvent = new InfluencerCreatedEvent();
                 influencerCreatedEvent.setInfluencerId(influencer.getId());
+                influencerCreatedEvent.setFollowers(influencer.getFollowers());
                 eventBus.emit(influencerCreatedEvent);
             }
         } catch (Exception e) {
