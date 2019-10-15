@@ -38,7 +38,7 @@ public class InfluencerApi {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, sortBy);
 
-        if (maxFollowers == null || minFollowers == null || minEngagement == null || maxEngagement == null) {
+        if (maxFollowers == null || minFollowers == null || minEngagement == null) {
             Page<Influencer> infulenerLists = influencerRepository.findByUsernameAndFullName(search, pageable);
             return normalizeResponse(infulenerLists);
         }

@@ -31,4 +31,21 @@ public class InfluencerService {
         }
         return null;
     }
+
+    public boolean checkInfluencerEmail(String influencerId) {
+        Influencer currentInfluencer = influencerRepository.findById(influencerId).orElse(null);
+        //Invalid Id
+        if(currentInfluencer == null){
+            return false;
+        }
+        try {
+            String influencerEmail = currentInfluencer.getEmail();
+            if (influencerEmail.isEmpty()) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }

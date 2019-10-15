@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import web.entities.Influencer;
 
+import java.util.Optional;
+
 
 @Repository
 public interface InfluencerRepository extends JpaRepository<Influencer, String> {
@@ -18,5 +20,6 @@ public interface InfluencerRepository extends JpaRepository<Influencer, String> 
 
     @Query("select v from Influencer v where v.username like %:search% or v.fullName like %:search%")
     Page<Influencer> findByUsernameAndFullName(@Param("search") String username, Pageable pageable);
-    
+
+    Optional<Influencer> findById(String id);
 }
