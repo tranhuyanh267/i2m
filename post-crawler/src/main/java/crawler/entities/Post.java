@@ -21,5 +21,6 @@ public class Post {
     private int viewCount;
     @Column(name = "influencer_id")
     private String influencerId;
+    private String type;
 }
 

@@ -30,6 +30,7 @@ public class Post {
     private String thumbnailUrl;
     private boolean isVideo;
     private int viewCount;
+    private String type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "influencer_id")

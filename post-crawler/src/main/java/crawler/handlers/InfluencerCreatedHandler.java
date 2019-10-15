@@ -42,8 +42,8 @@ public class InfluencerCreatedHandler {
         return items.stream().map(item -> {
             try {
                 Post post = new Post();
+                post.setId(item.getId() + "-1");
                 post.setInfluencerId(influencerId);
-                post.setId(item.getId());
                 post.setCommentCount(item.getComment_count());
                 post.setLikeCount(item.getLike_count());
                 if (item.getCaption() != null) {
@@ -52,6 +52,7 @@ public class InfluencerCreatedHandler {
                 post.setCode(item.getCode());
                 post.setViewCount(item.getView_count());
                 post.setVideo(item.isHas_audio());
+                post.setType("LATEST");
 
                 if (item.getImage_versions2() != null) {
                     post.setThumbnailUrl(item.getImage_versions2().getCandidates().get(0).getUrl());
