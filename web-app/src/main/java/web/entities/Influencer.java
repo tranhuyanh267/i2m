@@ -45,5 +45,8 @@ public class Influencer {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany()
+    private Set<Report> reports = new HashSet<>();
+
 
 }
