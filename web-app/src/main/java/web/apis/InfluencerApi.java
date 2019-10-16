@@ -34,7 +34,8 @@ public class InfluencerApi {
                                                     @Nullable @RequestParam(value = "minFollowers") Integer minFollowers,
                                                     @Nullable @RequestParam(value = "maxFollowers") Integer maxFollowers,
                                                     @Nullable @RequestParam(value = "minEngagement") Float minEngagement,
-                                                    @Nullable @RequestParam(value = "maxEngagement") Float maxEngagement
+                                                    @Nullable @RequestParam(value = "maxEngagement") Float maxEngagement,
+                                                    @Nullable @RequestParam(value = "categories") List<String> categories
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, sortBy);
 

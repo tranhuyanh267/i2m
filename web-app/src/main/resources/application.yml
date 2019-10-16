@@ -5,6 +5,17 @@ spring:
     password: 123
     sqlScriptEncoding: UTF-8
 
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+      
+  rabbitmq:
+    host: 35.240.130.146
+    port: 30069
+    username: admin
+    password: grove1234
+
   jpa:
     hibernate:
       ddl-auto: update

@@ -1,6 +1,7 @@
 package web.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.entities.Influencer;
 import web.entities.Pack;
@@ -15,7 +16,9 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class PackService {
+    @Autowired
     private PackRepository packRepository;
+    @Autowired
     private InfluencerRepository influencerRepository;
 
     public List<Pack> getUserPacks(String userId) {

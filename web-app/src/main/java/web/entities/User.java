@@ -1,6 +1,7 @@
 package web.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import web.constants.RoleName;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -26,11 +28,20 @@ public class User {
     private String password;
     private boolean isActive;
     private String imgUrl;
+
     @Enumerated(EnumType.STRING)
     private RoleName role;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_category", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Set<Category> categories = new HashSet<>();
+    private Set<Category> categories = new  HashSet<>();
+
+    public User() {
+    }
+
+    public User(Set<Category> categories) {
+        this.categories = categories;
+    }
+
 }

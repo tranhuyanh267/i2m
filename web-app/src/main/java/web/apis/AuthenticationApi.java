@@ -17,6 +17,7 @@ import web.entities.User;
 import web.exceptions.WebApiReponse;
 import web.payload.LoginRequest;
 import web.payload.SignUpRequest;
+import web.repositories.CategoryRepository;
 import web.repositories.UserRepository;
 import web.security.JwtTokenProvider;
 
@@ -30,6 +31,7 @@ public class AuthenticationApi {
 
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder;
     private JwtTokenProvider tokenProvider;
 
@@ -50,7 +52,7 @@ public class AuthenticationApi {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.ok(new WebApiReponse(false, "Email address already in use."));
+            return ResponseEntity.badRequest().body("existed_email");
         }
 
         // Creating user's account
@@ -60,6 +62,8 @@ public class AuthenticationApi {
         user.setPassword(signUpRequest.getPassword());
         user.setRole(RoleName.USER_ROLE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        user.setCategories(signUpRequest.getCategory());
 
         User result = userRepository.save(user);
 

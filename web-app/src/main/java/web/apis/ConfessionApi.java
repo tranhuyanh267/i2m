@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/confession")
+@RequestMapping("api/confession")
 public class ConfessionApi {
 
     @Autowired
@@ -51,11 +51,13 @@ public class ConfessionApi {
         return result.size() > 0 ? ResponseEntity.ok(result) : ResponseEntity.badRequest().body("Confession doesn't exist!!!");
     }
 
-    @Async
+
     @PostMapping("")
     public ResponseEntity<?> sendEmail(@RequestParam("attachFile") @Nullable MultipartFile file,
-                                       @RequestParam("subject") @NotBlank String subject, @RequestParam("body") @NotBlank String body,
-                                       @RequestParam("influencerId") String influencerId, @CurrentUser UserPrincipal userPrincipal) {
+                                       @RequestParam("subject") @NotBlank String subject,
+                                       @RequestParam("body") @NotBlank String body,
+                                       @RequestParam("influencerId") String influencerId,
+                                       @CurrentUser UserPrincipal userPrincipal) {
 
         if (!influencerService.checkInfluencerEmail(influencerId)) {
             return ResponseEntity.badRequest().body("Current Influencer has no valid email!");

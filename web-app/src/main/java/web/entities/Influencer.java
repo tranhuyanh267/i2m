@@ -35,8 +35,6 @@ public class Influencer {
     private String externalUrl;
     private boolean isVerified;
     private float engagement;
-    private int userTagCount;
-    private boolean hasAnonymousProfilePicture;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_category", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -47,12 +45,115 @@ public class Influencer {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "influencer",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private Set<Report> reports = new HashSet<>();
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    public int getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
+    }
+
+    public int getFollowings() {
+        return followings;
+    }
+
+    public void setFollowings(int followings) {
+        this.followings = followings;
+    }
+
+    public int getMediaCount() {
+        return mediaCount;
+    }
+
+    public void setMediaCount(int mediaCount) {
+        this.mediaCount = mediaCount;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getExternalUrl() {
+        return externalUrl;
+    }
+
+    public void setExternalUrl(String externalUrl) {
+        this.externalUrl = externalUrl;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public float getEngagement() {
+        return engagement;
+    }
+
+    public void setEngagement(float engagement) {
+        this.engagement = engagement;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 }

@@ -13,13 +13,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
 public class UserPrincipal implements UserDetails, OAuth2User {
 
     private String id;
     @JsonIgnore
     private String email;
-    @JsonIgnore
+
 
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
