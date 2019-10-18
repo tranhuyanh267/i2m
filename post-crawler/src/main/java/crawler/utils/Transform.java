@@ -4,10 +4,10 @@ import crawler.entities.Post;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedItem;
 
 public class Transform {
-    public static Post transform(InstagramFeedItem item, String suffix, String type, String influencerId) {
+    public static Post transform(InstagramFeedItem item, String id, String type, String influencerId) {
         try {
             Post post = new Post();
-            post.setId(item.getId() + suffix);
+            post.setId(id);
             post.setInfluencerId(influencerId);
             post.setCommentCount(item.getComment_count());
             post.setLikeCount(item.getLike_count());

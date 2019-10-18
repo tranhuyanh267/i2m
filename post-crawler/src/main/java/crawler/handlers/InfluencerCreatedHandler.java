@@ -39,7 +39,10 @@ public class InfluencerCreatedHandler {
     }
 
     List<Post> transformToEntities(List<InstagramFeedItem> items, String influencerId) {
-        return items.stream().map(item -> Transform.transform(item, "-1", "LATEST", influencerId)).collect(Collectors.toList());
+        return items.stream().map(item -> {
+            String id = influencerId + "-" + items.indexOf(item) + "-1";
+            return Transform.transform(item, id, "LATEST", influencerId);
+        }).collect(Collectors.toList());
     }
 
 }

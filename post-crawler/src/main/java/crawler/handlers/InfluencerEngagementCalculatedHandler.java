@@ -31,6 +31,7 @@ public class InfluencerEngagementCalculatedHandler {
             return;
         }
         try {
+            String influencerId = event.getInfluencerId();
             List<Float> postEngagements = new ArrayList<>();
             String maxId = "";
             int highestLike = 0;
@@ -38,7 +39,7 @@ public class InfluencerEngagementCalculatedHandler {
             InstagramFeedItem highestCommentPost = null;
             int highestComment = 0;
             do {
-                InstagramUserFeedRequest request = new InstagramUserFeedRequest(Long.valueOf(event.getInfluencerId()), maxId, 0, 0);
+                InstagramUserFeedRequest request = new InstagramUserFeedRequest(Long.valueOf(influencerId), maxId, 0, 0);
                 InstagramFeedResult result = instagram4j.sendRequest(request);
                 if (result.getItems() != null) {
                     List<InstagramFeedItem> items = result.getItems();
@@ -59,10 +60,10 @@ public class InfluencerEngagementCalculatedHandler {
             }
             while (maxId != null && postEngagements.size() < 50);
             if (highestLikePost != null) {
-                postRepository.save(Transform.transform(highestLikePost, "-2", "MOST_LIKE", event.getInfluencerId()));
+                postRepository.save(Transform.transform(highestLikePost, influencerId + "-2", "MOST_LIKE", influencerId));
             }
             if (highestCommentPost != null) {
-                postRepository.save(Transform.transform(highestCommentPost, "-3", "MOST_COMMENT", event.getInfluencerId()));
+                postRepository.save(Transform.transform(highestCommentPost, influencerId+ "-3", "MOST_COMMENT", influencerId));
             }
 
             float influencerEngagement = calculateInfluencerEngagement(postEngagements);
