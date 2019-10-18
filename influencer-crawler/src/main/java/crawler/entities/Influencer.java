@@ -30,6 +30,7 @@ public class Influencer {
     private String externalUrl;
     private boolean hasAnonymousProfilePicture;
     private int userTagCount;
+    private boolean isAuthentic;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,

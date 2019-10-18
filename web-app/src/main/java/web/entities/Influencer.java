@@ -39,6 +39,7 @@ public class Influencer {
     private String externalUrl;
     private boolean isVerified;
     private float engagement;
+    private boolean isAuthentic;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_category", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
