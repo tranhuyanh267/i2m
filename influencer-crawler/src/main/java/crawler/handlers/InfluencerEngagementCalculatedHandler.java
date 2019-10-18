@@ -20,9 +20,13 @@ public class InfluencerEngagementCalculatedHandler {
     public void handler(InfluencerEngagementCalculatedEvent event) {
         Optional<Influencer> influencerOpt = influencerRepository.findById(event.getInfluencerId());
         if (influencerOpt.isPresent()) {
-            Influencer influencer = influencerOpt.get();
-            influencer.setEngagement(event.getEngagement());
-            influencerRepository.save(influencer);
+            try {
+                Influencer influencer = influencerOpt.get();
+                influencer.setEngagement(event.getEngagement());
+                influencerRepository.save(influencer);
+            } catch(Exception ex) {
+
+            }
         }
     }
 }
