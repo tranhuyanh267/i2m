@@ -36,12 +36,17 @@ public class ConfessionApi {
 
     @GetMapping("")
     public ResponseEntity<?> allConfession(@CurrentUser UserPrincipal userPrincipal) {
+        try {
+            emailService.downloadEmailsFromInbox();
+        } catch (Exception e) {
+
+        }
         List<AllConfessionResponse> result = confessionService.getAllUserConfession(userPrincipal.getId());
         return result.size() > 0 ? ResponseEntity.ok(result) : ResponseEntity.badRequest().body("You have no conversation!!!");
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<?> confessionMessage(@PathVariable(value = "id") Long confessionId, @CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<?> confessionMessage(@PathVariable(value = "id") String confessionId, @CurrentUser UserPrincipal userPrincipal) {
 
         if (!confessionService.checkConfessionExist(userPrincipal.getId(), confessionId)) {
             return ResponseEntity.badRequest().body("Confession doesn't exist!!!");

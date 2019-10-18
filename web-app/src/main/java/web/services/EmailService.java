@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import web.entities.Confession;
+import web.entities.MailBox;
 import web.entities.Influencer;
-import web.entities.Messages;
+import web.entities.Message;
 import web.model.ReceiveMessageModel;
 import web.repositories.InfluencerRepository;
 import web.repositories.MessageRepository;
@@ -48,7 +47,7 @@ public class EmailService {
     @Autowired
     MessageRepository messageRepository;
 
-    @Scheduled(fixedRate = 30000)
+    //@Scheduled(fixedRate = 10 * 60 * 1000)
     public void checkRecords() {
         try {
             downloadEmailsFromInbox();
@@ -93,16 +92,19 @@ public class EmailService {
             msg.setReplyTo(InternetAddress.parse("sendmailtav@gmail.com", false));
             //Set message content
             msg.setSubject(subject, "UTF-8");
-            msg.setText(body, "UTF-8");
+            msg.setContent(body, "text/html; charset=UTF-8");
             msg.setSentDate(new Date());
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(currentInfluencer.getEmail(), false));
+            msg.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(currentInfluencer.getEmail(), false));
 
             //Attach File To Message
             if (file != null) {
                 // Create the message body part
                 BodyPart messageBodyPart = new MimeBodyPart();
+
                 // Fill the message
                 messageBodyPart.setText(body);
+                messageBodyPart.setContent(body,"text/html; charset=UTF-8");
+
                 // Create a multipart message for attachment
                 Multipart multipart = new MimeMultipart();
                 // Set text message part
@@ -116,7 +118,8 @@ public class EmailService {
                 messageBodyPart.setFileName(file.getOriginalFilename());
                 multipart.addBodyPart(messageBodyPart);
                 // Send the complete message parts
-                msg.setContent(multipart);
+              ///  msg.setContent(multipart);
+                msg.setContent(multipart, "text/html; charset=UTF-8");
                 filename = sendFile.getName();
             }
 
@@ -128,14 +131,14 @@ public class EmailService {
         }
         //Store Confession to DB
         try {
-            Confession confession = confessionService.findConfession(userId, influencerId);
+            MailBox confession = confessionService.findConfession(userId, influencerId);
             if (confession == null) {
-                Confession newConfession = new Confession();
+                MailBox newConfession = new MailBox();
                 newConfession.setUser(userRepository.findUserByIdCustom(userId));
                 newConfession.setInfluencer(currentInfluencer);
                 confession = confessionService.createConfession(newConfession);
             }
-            Messages newMessage = new Messages(subject, body, new Date(), true, filename, confession);
+            Message newMessage = new Message(subject, body, new Date(), true, filename, confession);
             messageRepository.save(newMessage);
         } catch (Exception e) {
             //Log
@@ -159,11 +162,11 @@ public class EmailService {
             Folder folderInbox = store.getFolder("INBOX");
             folderInbox.open(Folder.READ_WRITE);
             // find unread message
-            Message[] messages = folderInbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+            javax.mail.Message[] messages = folderInbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
             for (int i = 0; i < messages.length; i++) {
-                Message msg = messages[i];
+                javax.mail.Message msg = messages[i];
                 // mark as read
-                folderInbox.setFlags(new Message[]{msg}, new Flags(Flags.Flag.SEEN), true);
+                folderInbox.setFlags(new javax.mail.Message[]{msg}, new Flags(Flags.Flag.SEEN), true);
                 //
                 detectConfession(messages[i]);
             }
@@ -207,7 +210,7 @@ public class EmailService {
         return properties;
     }
 
-    public void detectConfession(Message msg) throws Exception {
+    public void detectConfession(javax.mail.Message msg) throws Exception {
         MimeMultipart mimeMultipart = (MimeMultipart) msg.getContent();
         String allMailContain = getTextFromMimeMultipart(mimeMultipart);
 
@@ -251,9 +254,9 @@ public class EmailService {
             mySentMessage = mySentMessage.substring(0, mySentMessage.length() - 1);
         }
         String myReceiveMessage = String.join("", receiveMessage.getReceiveMessage());
-        Messages oldMessage = messageRepository.findByDetail(mySentMessage, subject);
-        Messages newMessages = new Messages("Re: " + subject, myReceiveMessage, new Date(), false, "", oldMessage.getConfession());
-        messageRepository.save(newMessages);
+        Message oldMessage = messageRepository.findByDetail(mySentMessage, subject);
+        Message newMessage = new Message("Re: " + subject, myReceiveMessage, new Date(), false, "", oldMessage.getMailBox());
+        messageRepository.save(newMessage);
     }
 
     public ReceiveMessageModel replyEmailContainHandle(String content) {

@@ -22,6 +22,7 @@ public class WebAppApplication extends SpringBootServletInitializer {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
+
     public static void main(String[] args) {
         SpringApplication.run(WebAppApplication.class, args);
     }

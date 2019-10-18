@@ -1,12 +1,18 @@
 package web.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import web.entities.Influencer;
 import web.entities.Pack;
+import web.payload.TopInfluencerResponse;
 import web.repositories.InfluencerRepository;
 import web.repositories.PackRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,5 +53,10 @@ public class InfluencerService {
             return false;
         }
         return true;
+    }
+
+    public Page<TopInfluencerResponse> findTopInfluencer(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return influencerRepository.findTopInfluencer(pageable);
     }
 }
