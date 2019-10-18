@@ -1,6 +1,6 @@
 spring:
   rabbitmq:
-    host: 35.240.130.146
+    host: 34.87.77.231
     port: 30069
     username: admin
     password: grove1234
