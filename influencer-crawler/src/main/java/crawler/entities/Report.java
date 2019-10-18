@@ -20,7 +20,7 @@ public class Report {
     )
     private String id;
     private int followers;
-    private int engagement;
+    private float engagement;
     private String influencerId;
     private String type;
     private Date createdDate;
