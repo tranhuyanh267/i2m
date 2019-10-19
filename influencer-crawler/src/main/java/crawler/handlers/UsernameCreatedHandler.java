@@ -42,6 +42,14 @@ public class UsernameCreatedHandler {
             InstagramSearchUsernameRequest request = new InstagramSearchUsernameRequest(event.getUsername());
             InstagramSearchUsernameResult result = instagram4j.sendRequest(request);
             InstagramUser instagramUser = result.getUser();
+            if (!"ok".equals(result.getStatus())) {
+                UsernameCreatedEvent retryEvent = new UsernameCreatedEvent();
+                retryEvent.setCategory(event.getCategory());
+                retryEvent.setCrawTime(new Date());
+                retryEvent.setUsername(event.getUsername());
+                eventBus.emit(retryEvent);
+                return;
+            }
             if (instagramUser != null && !instagramUser.is_private()) {
                 Influencer influencer = transform(instagramUser);
                 String categoryId = getCategoryId(event.getCategory());

@@ -28,4 +28,8 @@ public class InfluencerCreatedEvent extends Event {
     public void setFollowers(int followers) {
         this.followers = followers;
     }
+
+    public String route() {
+        return "influencerCreated";
+    }
 }

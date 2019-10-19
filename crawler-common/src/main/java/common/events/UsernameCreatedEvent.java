@@ -40,4 +40,8 @@ public class UsernameCreatedEvent extends Event {
     public void setCrawTime(Date crawTime) {
         this.crawTime = crawTime;
     }
+
+    public String route() {
+        return "usernameCreated";
+    }
 }

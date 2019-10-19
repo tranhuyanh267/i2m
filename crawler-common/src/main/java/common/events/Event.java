@@ -1,4 +1,5 @@
 package common.events;
 
-public class Event {
+public abstract class Event {
+    public abstract String route();
 }

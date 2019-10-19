@@ -28,4 +28,8 @@ public class InfluencerEngagementCalculatedEvent extends Event {
     public void setEngagement(float engagement) {
         this.engagement = engagement;
     }
+
+    public String route() {
+        return "influencerEngagementCalculated";
+    }
 }
