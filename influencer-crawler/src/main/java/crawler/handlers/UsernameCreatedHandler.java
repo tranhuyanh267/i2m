@@ -42,7 +42,7 @@ public class UsernameCreatedHandler {
             InstagramSearchUsernameRequest request = new InstagramSearchUsernameRequest(event.getUsername());
             InstagramSearchUsernameResult result = instagram4j.sendRequest(request);
             InstagramUser instagramUser = result.getUser();
-            if (!"ok".equals(result.getStatus())) {
+            if (!"ok".equals(result.getStatus()) && !"User not found".equals(result.getMessage())) {
                 UsernameCreatedEvent retryEvent = new UsernameCreatedEvent();
                 retryEvent.setCategory(event.getCategory());
                 retryEvent.setCrawTime(new Date());
