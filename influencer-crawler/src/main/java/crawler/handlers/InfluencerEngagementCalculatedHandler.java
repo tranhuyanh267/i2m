@@ -31,7 +31,7 @@ public class InfluencerEngagementCalculatedHandler {
 
                 storeReport(influencer);
             } catch(Exception ex) {
-
+                System.out.println("error");
             }
         }
     }
