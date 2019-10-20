@@ -79,6 +79,9 @@ public class InfluencerEngagementCalculatedHandler {
 
     float calculateInfluencerEngagement(List<Float> postEngagements) {
         float total = 0;
+        if (postEngagements.size() == 0) {
+            return 0;
+        }
         for (Float postEngagement : postEngagements) {
             total += postEngagement;
         }
