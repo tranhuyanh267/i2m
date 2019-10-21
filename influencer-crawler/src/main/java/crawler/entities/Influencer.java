@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -42,9 +43,14 @@ public class Influencer {
     )
     Set<Category> categories = new HashSet<>();
 
-    public void addCategory(Category tag) {
-        categories.add(tag);
-        tag.getInfluencers().add(this);
+    public void addCategories(Category category) {
+        categories.add(category);
+        category.getInfluencers().add(this);
+    }
+
+    public void addCategories(Set<Category> categories) {
+        categories.addAll(categories);
+        categories.forEach(category -> category.getInfluencers().add(this));
     }
 
     @Override

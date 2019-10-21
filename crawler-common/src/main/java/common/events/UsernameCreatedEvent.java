@@ -1,19 +1,21 @@
 package common.events;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class UsernameCreatedEvent extends Event {
     private String username;
-    private String category;
+    private List<String> categories = new ArrayList<String>();
     private Date crawTime;
 
     public UsernameCreatedEvent() {
 
     }
 
-    public UsernameCreatedEvent(String username, String category, Date crawTime) {
+    public UsernameCreatedEvent(String username, List<String> categories, Date crawTime) {
         this.username = username;
-        this.category = category;
+        this.categories = categories;
         this.crawTime = crawTime;
     }
 
@@ -25,12 +27,12 @@ public class UsernameCreatedEvent extends Event {
         this.username = username;
     }
 
-    public String getCategory() {
-        return category;
+    public List<String> getCategories() {
+        return categories;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 
     public Date getCrawTime() {

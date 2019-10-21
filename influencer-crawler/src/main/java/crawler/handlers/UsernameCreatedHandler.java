@@ -21,6 +21,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,7 +46,7 @@ public class UsernameCreatedHandler {
             InstagramUser instagramUser = result.getUser();
             if (!"ok".equals(result.getStatus()) && !"User not found".equals(result.getMessage())) {
                 UsernameCreatedEvent retryEvent = new UsernameCreatedEvent();
-                retryEvent.setCategory(event.getCategory());
+                retryEvent.setCategories(event.getCategories());
                 retryEvent.setCrawTime(new Date());
                 retryEvent.setUsername(event.getUsername());
                 eventBus.emit(retryEvent);
@@ -52,9 +54,7 @@ public class UsernameCreatedHandler {
             }
             if (instagramUser != null && !instagramUser.is_private()) {
                 Influencer influencer = transform(instagramUser);
-                String categoryId = getCategoryId(event.getCategory());
-                String categoryName = getCategoryName(event.getCategory());
-                influencer.addCategory(new Category(categoryId, categoryName));
+                influencer.addCategories(buildCategoryList(event.getCategories()));
                 influencerRepository.save(influencer);
 
                 storeReport(influencer);
@@ -67,6 +67,14 @@ public class UsernameCreatedHandler {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    Set<Category> buildCategoryList(List<String> cateStrings) {
+        return cateStrings.stream().map(item -> {
+            String categoryId = getCategoryId(item);
+            String categoryName = getCategoryName(item);
+            return new Category(categoryId, categoryName);
+        }).collect(Collectors.toSet());
     }
 
     private void storeReport(Influencer influencer) {
