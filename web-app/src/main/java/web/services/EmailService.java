@@ -92,7 +92,19 @@ public class EmailService {
             msg.setReplyTo(InternetAddress.parse("sendmailtav@gmail.com", false));
             //Set message content
             msg.setSubject(subject, "UTF-8");
+
+            //Someone change this line, that why I can't test with postman
+            //The DB store '/n' but the sent email don't.
+            //Example: I send the email with body: "Hello, B\nNice to meet you."
+            //Email influencer will get: "Hello, B Nice to meet you."
+            //But the DB store : "Hello, B\nNice to meet you."
+            //So, system can't detect who's the one sent it.
+            //If it work correctly with react, keep it
             msg.setContent(body, "text/html; charset=UTF-8");
+
+            //This is my old line
+            //msg.setText(body, "UTF-8");
+
             msg.setSentDate(new Date());
             msg.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(currentInfluencer.getEmail(), false));
 
@@ -274,8 +286,8 @@ public class EmailService {
             String[] commaSplit = (lineSplit[j].split("\\,"));
             if (commaSplit.length == 3) {
                 String[] colonSplit = commaSplit[2].split("\\:");
-                if (colonSplit.length == 2) {
-                    String[] emailSplit = colonSplit[1].split("<" + MY_EMAIL_ADDRESS + ">");
+                if (colonSplit.length > 1) {
+                    String[] emailSplit = colonSplit[1].split("<sendmailtav@gmail\\.com>");
                     if (emailSplit.length == 2) {
                         line = j;
                         revive = false;
@@ -300,7 +312,9 @@ public class EmailService {
         reviveMessage.remove(reviveMessage.size() - 1);
 
         //Remove empty line
-        sentMessage.remove(0);
+        if(sentMessage.size() > 1){
+            sentMessage.remove(0);
+        }
 //        if (sentMessage.size() % 2 == 0) {
 //            sentMessage.remove(sentMessage.size() - 1);
 //        }

@@ -43,7 +43,7 @@ public class ConfessionService {
     public boolean checkConfessionExist(String userId, String confessionId) {
         List<MailBox> confessionList = confessionRepository.findConfessionsByUserId(userId);
         for (MailBox confession : confessionList) {
-            if (confession.getId() == confessionId) {
+            if ((confession.getId()).equals(confessionId)) {
                 return true;
             }
         }

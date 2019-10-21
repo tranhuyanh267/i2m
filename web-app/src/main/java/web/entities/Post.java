@@ -22,6 +22,7 @@ public class Post {
     private String code;
     private int commentCount;
     private int likeCount;
+    private String type;
 
     @Lob
     private String content;

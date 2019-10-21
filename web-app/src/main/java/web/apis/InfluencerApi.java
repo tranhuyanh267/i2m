@@ -81,13 +81,21 @@ public class InfluencerApi {
 
     @GetMapping("/suggestion")
     public List<Influencer> getTopInfluencer(@CurrentUser UserPrincipal userPrincipal) {
-        User userDetails = userService.getUserDetails(userPrincipal.getId());
-        if(userDetails.getCategories().size() > 0) {
-            List<String> categoryIds = userDetails.getCategories().stream().map(c -> c.getId()).collect(Collectors.toList());
-            return influencerRepository.findByUserCategory(categoryIds);
+        if(userPrincipal != null) {
+            User userDetails = userService.getUserDetails(userPrincipal.getId());
+
+
+            if(userDetails.getCategories().size() > 0) {
+                List<String> categoryIds = userDetails.getCategories().stream().map(c -> c.getId()).collect(Collectors.toList());
+                return influencerRepository.findByUserCategory(categoryIds);
+            }
         }
 
-        return influencerRepository.suggestTopInfluencer();
+        List<Influencer> influencers = influencerRepository.suggestTopInfluencer();
+        if(influencers.size() > 0) {
+            return influencers;
+        }
+        return influencerRepository.findOrderByFollowersDescLimitTo(9);
     }
 
     private PagedResponse<Influencer> normalizeResponse(Page<Influencer> infulenerLists) {

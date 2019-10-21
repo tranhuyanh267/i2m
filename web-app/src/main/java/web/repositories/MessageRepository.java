@@ -13,6 +13,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query(value = "SELECT * FROM message where body like ?1 and subject like ?2", nativeQuery = true)
     Message findByDetail(String oldBody, String oldSubject);
 
-    @Query(value = "SELECT * FROM message WHERE conversation_id = ?1 ORDER BY send_date", nativeQuery = true)
+    @Query(value = "SELECT * FROM message WHERE mail_id  = ?1 ORDER BY send_date", nativeQuery = true)
     List<Message> findByConfessionId(String confessionId);
 }

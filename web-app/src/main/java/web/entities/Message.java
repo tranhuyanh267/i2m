@@ -30,7 +30,7 @@ public class Message {
     private boolean isSended;
     private String fileUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "mail_id")
     private MailBox mailBox;
 

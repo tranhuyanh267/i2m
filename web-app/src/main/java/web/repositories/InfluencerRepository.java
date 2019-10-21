@@ -39,4 +39,7 @@ public interface InfluencerRepository extends JpaRepository<Influencer, String> 
 
     @Query(value = "select count(c.id) as mail_count, c.influencer_id, i.* from mail_box c inner join message m on m.mail_id = c.id inner join influencer i on i.id = c.influencer_id group by c.influencer_id order by mail_count desc, i.engagement desc limit 9", nativeQuery = true)
     List<Influencer> suggestTopInfluencer();
+
+    @Query(value = "select * from influencer order by followers desc limit ?1", nativeQuery = true)
+    List<Influencer> findOrderByFollowersDescLimitTo(int limit);
 }
