@@ -7,6 +7,7 @@
         <module>crawler-common</module>
         <module>influencer-crawler</module>
         <module>post-crawler</module>
+        <module>calculation</module>
     </modules>
 
     <parent>

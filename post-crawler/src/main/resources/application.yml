@@ -8,8 +8,7 @@ spring:
       simple:
         prefetch: 10
 
-  datasource:
-    url: jdbc:mysql://35.240.134.127:3306/i2m
-    username: root
-    password: 123
-    sqlScriptEncoding: UTF-8
+  data:
+    mongodb:
+      uri: mongodb://35.240.134.127:27017/i2m
+

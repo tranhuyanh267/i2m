@@ -1,12 +1,15 @@
-package crawler.entities;
+package calculation.documents;
 
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
 @Document
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post {
     @Id
     private String id;
@@ -17,9 +20,7 @@ public class Post {
     private int viewCount;
     private int commentCount;
     private int likeCount;
+    private float engagement;
     private String influencerId;
     private String type;
-    private float engagement;
-
 }
-

@@ -23,7 +23,7 @@ public class InfluencerCreatedHandler {
     private Instagram4j instagram4j;
     private PostRepository postRepository;
 
-    @RabbitListener(queues = QueueName.INFLUENCER_WAITING_TO_FETCH_LATEST_POST_QUEUE)
+    // @RabbitListener(queues = QueueName.INFLUENCER_WAITING_TO_FETCH_LATEST_POST_QUEUE)
     public void handler(InfluencerCreatedEvent event) {
         try {
             InstagramUserFeedRequest request = new InstagramUserFeedRequest(Long.valueOf(event.getInfluencerId()));
