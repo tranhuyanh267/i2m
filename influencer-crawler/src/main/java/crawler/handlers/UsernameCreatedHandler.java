@@ -16,6 +16,7 @@ import org.brunocvcunha.instagram4j.requests.InstagramSearchUsernameRequest;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramSearchUsernameResult;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramUser;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +35,7 @@ public class UsernameCreatedHandler {
     private InfluencerRepository influencerRepository;
     private Instagram4j instagram4j;
     private ReportRepository reportRepository;
+    private MongoTemplate mongoTemplate;
 
     @RabbitListener(queues = QueueName.USERNAME_QUEUE)
     public void handler(UsernameCreatedEvent event) {
@@ -56,6 +58,7 @@ public class UsernameCreatedHandler {
                 Influencer influencer = transform(instagramUser);
                 influencer.addCategories(buildCategoryList(event.getCategories()));
                 influencerRepository.save(influencer);
+                mongoTemplate.save(instagramUser, "influencers");
 
                 storeReport(influencer);
 

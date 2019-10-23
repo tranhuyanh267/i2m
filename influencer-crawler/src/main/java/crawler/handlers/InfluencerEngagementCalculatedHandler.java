@@ -20,7 +20,7 @@ public class InfluencerEngagementCalculatedHandler {
     private InfluencerRepository influencerRepository;
     private ReportRepository reportRepository;
 
-    @RabbitListener(queues = QueueName.INFLUENCER_WAITING_TO_SAVE_ENGAGEMENT_QUEUE)
+    //@RabbitListener(queues = QueueName.INFLUENCER_WAITING_TO_SAVE_ENGAGEMENT_QUEUE)
     public void handler(InfluencerEngagementCalculatedEvent event) {
         Optional<Influencer> influencerOpt = influencerRepository.findById(event.getInfluencerId());
         if (influencerOpt.isPresent()) {
