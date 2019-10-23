@@ -49,8 +49,9 @@ public class Influencer {
     }
 
     public void addCategories(Set<Category> categories) {
-        categories.addAll(categories);
-        categories.forEach(category -> category.getInfluencers().add(this));
+        if (categories != null) {
+            categories.forEach(this::addCategories);
+        }
     }
 
     @Override
