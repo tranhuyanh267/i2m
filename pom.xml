@@ -8,6 +8,7 @@
         <module>influencer-crawler</module>
         <module>post-crawler</module>
         <module>calculation</module>
+        <module>craw-management</module>
     </modules>
 
     <parent>

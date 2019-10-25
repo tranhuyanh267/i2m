@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PostRepository extends CrudRepository<PostRepository, String> {
+public interface PostRepository extends CrudRepository<Post, String> {
     List<Post> findByInfluencerId(String influencerId);
 }

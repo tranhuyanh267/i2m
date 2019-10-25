@@ -11,6 +11,6 @@ public class EventBus {
     private RabbitTemplate rabbitTemplate;
 
     public void emit(Event event) {
-        rabbitTemplate.convertAndSend("input-exchange", event.route(), event);
+        rabbitTemplate.convertAndSend(event.route(), event);
     }
 }

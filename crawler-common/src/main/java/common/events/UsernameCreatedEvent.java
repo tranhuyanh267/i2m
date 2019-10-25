@@ -44,6 +44,6 @@ public class UsernameCreatedEvent extends Event {
     }
 
     public String route() {
-        return "usernameCreated";
+        return "username-queue";
     }
 }

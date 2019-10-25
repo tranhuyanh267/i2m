@@ -23,4 +23,5 @@ public class Post {
     private float engagement;
     private String influencerId;
     private String type;
+
 }
