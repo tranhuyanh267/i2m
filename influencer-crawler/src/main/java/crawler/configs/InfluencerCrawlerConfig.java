@@ -12,7 +12,7 @@ import java.io.IOException;
 public class InfluencerCrawlerConfig {
     @Bean
     public Instagram4j instagram4j() {
-        Instagram4j instagram4j = Instagram4j.builder().username("huyanh267").password("huyanhkute").build();
+        Instagram4j instagram4j = Instagram4j.builder().username("cloudvnn2802").password("vankute").build();
         instagram4j.setup();
         try {
             instagram4j.login();

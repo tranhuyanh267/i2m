@@ -5,8 +5,8 @@
     <modules>
         <module>web-app</module>
         <module>crawler-common</module>
-        <module>influencer-crawler</module>
         <module>post-crawler</module>
+        <module>influencer-crawler</module>
         <module>calculation</module>
         <module>craw-management</module>
     </modules>

@@ -63,7 +63,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>influencer-crawler</finalName>
+        <finalName>instagramUser-crawler</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

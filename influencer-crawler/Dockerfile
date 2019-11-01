@@ -1,3 +1,3 @@
 FROM openjdk:8-jdk-alpine
-ADD target/influencer-crawler.jar influencer-crawler.jar
-CMD ["java", "-jar", "influencer-crawler.jar"]
+ADD target/instagramUser-crawler.jar instagramUser-crawler.jar
+CMD ["java", "-jar", "instagramUser-crawler.jar"]

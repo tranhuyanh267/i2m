@@ -29,8 +29,11 @@ public class PostHandler {
     @RabbitListener(queues = "test")
     public void handler(InfluencerCreatedEvent event) {
         try {
+            String maxId = event.getMaxId();
+            if (maxId == null) {
+                return;
+            }
             String influencerId = event.getInfluencerId();
-            String maxId = "";
             InstagramUserFeedRequest request = new InstagramUserFeedRequest(Long.valueOf(influencerId), maxId, 0, 0);
             InstagramFeedResult result = instagram4j.sendRequest(request);
             if (!"ok".equals(result.getStatus())) {

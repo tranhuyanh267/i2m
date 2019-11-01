@@ -1,9 +1,9 @@
 package calculation.repos;
 
-import calculation.entities.Post;
+import calculation.entities.Report;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends CrudRepository<Post, String> {
+public interface ReportRepository extends CrudRepository<Report, String> {
 }
