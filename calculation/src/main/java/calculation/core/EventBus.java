@@ -1,6 +1,5 @@
 package calculation.core;
 
-import common.events.Event;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class EventBus {
     private RabbitTemplate rabbitTemplate;
 
-    public void emit(Event event) {
-        rabbitTemplate.convertAndSend(event.route(), event);
+    public void emit(String exchange, Object payload) {
+        rabbitTemplate.convertAndSend(exchange, "*", payload);
     }
 }

@@ -1,44 +1,38 @@
 package calculation;
 
-import calculation.documents.Influencer;
-import calculation.handlers.Test;
-import calculation.repos.InfluencerRepository;
-import calculation.repos.PostRepository;
-import common.payload.PostPayload;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import calculation.core.EventBus;
+import calculation.documents.InstagramUser;
+import calculation.repos.InstagramUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 
 @SpringBootApplication
 public class CalculationApplication implements ApplicationRunner {
-
-    @Autowired
-    PostRepository postRepository;
-
-    @Autowired
-    InfluencerRepository influencerRepository;
-
-    @Autowired
-    Test test;
-
     public static void main(String[] args) {
         SpringApplication.run(CalculationApplication.class, args);
     }
 
+    @Autowired
+    InstagramUserRepository instagramUserRepository;
+
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+    @Autowired
+    EventBus eventBus;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        List<Influencer> all = influencerRepository.findAll();
-        int count = 0;
-        for (Influencer influencer : all) {
-            test.calculate(influencer.getPk(), 396251);
-            count++;
-            System.out.println(count);
+        List<InstagramUser> instagramUsers = instagramUserRepository.findAll();
+        for (InstagramUser instagramUser : instagramUsers) {
+            eventBus.emit("instagram-user-queue", instagramUser);
         }
     }
-
 }
+

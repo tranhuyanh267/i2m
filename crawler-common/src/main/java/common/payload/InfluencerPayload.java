@@ -22,8 +22,10 @@ public class InfluencerPayload extends Event {
         this.engagement = engagement;
         this.averageLikePerPost = averageLikePerPost;
         this.averageCommentPerPost = averageCommentPerPost;
+
         this.averageViewPerVideo = averageViewPerVideo;
         this.averageEngagementPerVideo = averageEngagementPerVideo;
+
         this.averageEngagementPerImage = averageEngagementPerImage;
     }
 
