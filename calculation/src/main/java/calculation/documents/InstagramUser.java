@@ -35,7 +35,7 @@ public class InstagramUser {
     private String email;
     @Field("external_url")
     private String externalUrl;
-    @Field("is_verify")
+    @Field("is_verified")
     private boolean isVerified;
     @Field("username")
     private String username;
