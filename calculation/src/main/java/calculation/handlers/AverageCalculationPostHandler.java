@@ -6,6 +6,7 @@ import calculation.dtos.Average;
 import calculation.entities.Influencer;
 import calculation.repos.InfluencerRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,6 +23,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Component
 @AllArgsConstructor
+@Log4j
 public class AverageCalculationPostHandler {
     private MongoTemplate mongoTemplate;
     private InfluencerRepository influencerRepository;
@@ -32,6 +34,7 @@ public class AverageCalculationPostHandler {
             return;
         }
 
+        log.info("Handle Average Calculation Post  " + instagramUser.getId());
         MatchOperation match = match(new Criteria("instagramUserId").is(instagramUser.getId()));
         ProjectionOperation project = project("likeCount", "commentCount", "instagramUserId")
                 .andExpression("(likeCount + viewCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
