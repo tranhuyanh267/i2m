@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.Objects;
@@ -40,12 +41,14 @@ class InfluencerHandler {
 
             Set<Category> collect = instagramUser.getCategories().stream().filter(Objects::nonNull).map(ca -> {
                 Category category = new Category();
-                category.setId(String.valueOf(ca.hashCode()));
+                String cate = StringUtils.trimAllWhitespace(ca);
+                category.setId(String.valueOf(cate.hashCode()));
                 category.setName(ca);
                 return category;
             }).collect(Collectors.toSet());
 
             influencer.setCategories(collect);
+            influencer.setAuthentic(influencer.isVerified());
             influencerRepository.save(influencer);
 
             eventBus.emit("influencer-exchange", instagramUser);

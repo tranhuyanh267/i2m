@@ -29,10 +29,10 @@ public class CalculationApplication implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        List<InstagramUser> instagramUsers = instagramUserRepository.findAll();
-//        for (InstagramUser instagramUser : instagramUsers) {
-//            eventBus.emit("instagram-user-queue", instagramUser);
-//        }
+        List<InstagramUser> instagramUsers = instagramUserRepository.findAll();
+        for (InstagramUser instagramUser : instagramUsers) {
+            eventBus.emit("instagram-user-queue", instagramUser);
+        }
     }
 }
 

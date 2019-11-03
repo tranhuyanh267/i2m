@@ -26,7 +26,7 @@ public class InstagramFeed {
     private int viewCount;
     private float engagement;
     @Field("caption.text")
-    private String text;
+    private String content;
     @Field("taken_at")
     private int takenAt;
 

@@ -19,7 +19,7 @@ public class MostLikeHandler {
     private InstagramFeedRepository instagramFeedRepository;
     private PostRepository postRepository;
 
-    @RabbitListener(queues = "most-like-queue")
+        @RabbitListener(queues = "most-like-queue")
     public void handler(InstagramUser instagramUser) {
         log.info("Handle Most Like " + instagramUser.getId());
         if (instagramUser.getMediaCount() <= 0 || instagramUser.isPrivate() || instagramUser.getFollowers() <= 0) {
