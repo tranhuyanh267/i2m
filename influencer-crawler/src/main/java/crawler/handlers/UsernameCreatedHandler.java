@@ -1,6 +1,5 @@
 package crawler.handlers;
 
-import common.constants.QueueName;
 import common.events.InfluencerCreatedEvent;
 import common.events.UsernameCreatedEvent;
 import crawler.core.EventBus;
@@ -28,7 +27,7 @@ public class UsernameCreatedHandler {
     private Instagram4j instagram4j;
     private InstagramUserRepo instagramUserRepo;
 
-    @RabbitListener(queues = QueueName.USERNAME_QUEUE)
+    @RabbitListener(queues = "username-queue")
     public void handler(UsernameCreatedEvent event) {
         if (StringUtils.isEmpty(event.getUsername())) {
             return;
