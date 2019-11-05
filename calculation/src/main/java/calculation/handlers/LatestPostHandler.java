@@ -6,6 +6,7 @@ import calculation.entities.Post;
 import calculation.repos.InstagramFeedRepository;
 import calculation.repos.PostRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -15,15 +16,17 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
+@Log4j
 public class LatestPostHandler {
     private InstagramFeedRepository instagramFeedRepository;
     private PostRepository postRepository;
 
-    @RabbitListener(queues = "latest-post-queue")
+    @RabbitListener(queues = "latest-post-queue", containerFactory = "lastestPostContainerFactory")
     public void handler(InstagramUser instagramUser) {
         if (instagramUser.getMediaCount() <= 0 || instagramUser.isPrivate() || instagramUser.getFollowers() <= 0) {
             return;
         }
+        log.info("Handle Latest Post " + instagramUser.getId());
         List<InstagramFeed> lastestFeeds = instagramFeedRepository.findFirst12ByInstagramUserIdOrderByCreatedDateAsc(instagramUser.getId());
         if (lastestFeeds.size() > 0) {
             List<Post> latestPosts = new ArrayList<>();

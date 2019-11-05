@@ -27,6 +27,7 @@ public class Influencer {
     @Lob
     private String externalUrl;
     private boolean isVerified;
+    private boolean isAuthentic;
     private float engagement;
     private float averageLikePerPost;
     private float averageCommentPerPost;

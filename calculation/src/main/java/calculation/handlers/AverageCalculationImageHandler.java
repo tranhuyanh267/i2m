@@ -21,32 +21,30 @@ import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
+@Log4j
 @Component
 @AllArgsConstructor
-@Log4j
-public class AverageCalculationPostHandler {
+public class AverageCalculationImageHandler {
     private MongoTemplate mongoTemplate;
     private InfluencerRepository influencerRepository;
 
-    @RabbitListener(queues = "average-post-calculation-queue")
+    @RabbitListener(queues = "average-image-calculation-queue")
     public void handler(InstagramUser instagramUser) {
         if (instagramUser.getMediaCount() <= 0 || instagramUser.isPrivate() || instagramUser.getFollowers() <= 0) {
             return;
         }
+        log.info("Handle Average Calculation Image " + instagramUser.getId());
+        MatchOperation match = match(new Criteria("instagramUserId").is(instagramUser.getId())
+                .andOperator(new Criteria("viewCount").is(0)));
 
-        log.info("Handle Average Calculation Post  " + instagramUser.getId());
-        MatchOperation match = match(new Criteria("instagramUserId").is(instagramUser.getId()));
-        ProjectionOperation project = project("likeCount", "commentCount", "instagramUserId")
-                .andExpression("(likeCount + viewCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
+        ProjectionOperation project = project("instagramUserId")
+                .andExpression("(likeCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
 
         GroupOperation group = group("instagramUserId")
-                .avg("likeCount").as("averageLikePerPost")
-                .avg("commentCount").as("averageCommentPerPost")
-                .avg("engagement").as("engagement");
+                .avg("engagement").as("averageEngagementPerImage");
 
         TypedAggregation agg = new TypedAggregation(InstagramFeed.class, match, project, group);
         Average average = mongoTemplate.aggregate(agg, Average.class).getUniqueMappedResult();
-
         if (average != null) {
             Optional<Influencer> influencerOptional = influencerRepository.findById(instagramUser.getId());
             if (influencerOptional.isPresent()) {
@@ -55,6 +53,5 @@ public class AverageCalculationPostHandler {
                 influencerRepository.save(influencer);
             }
         }
-
     }
 }
