@@ -3,6 +3,7 @@ package calculation.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public class Influencer {
     private float averageViewPerVideo;
     private float averageEngagementPerVideo;
     private float averageEngagementPerImage;
+    private Date lastPostTakenAt;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
