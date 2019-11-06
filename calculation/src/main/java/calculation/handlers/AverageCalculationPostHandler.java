@@ -4,7 +4,9 @@ import calculation.documents.InstagramFeed;
 import calculation.documents.InstagramUser;
 import calculation.dtos.Average;
 import calculation.entities.Influencer;
+import calculation.entities.Report;
 import calculation.repos.InfluencerRepository;
+import calculation.repos.ReportRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -17,6 +19,7 @@ import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -27,6 +30,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 public class AverageCalculationPostHandler {
     private MongoTemplate mongoTemplate;
     private InfluencerRepository influencerRepository;
+    private ReportRepository reportRepository;
 
     @RabbitListener(queues = "average-post-calculation-queue")
     public void handler(InstagramUser instagramUser) {
@@ -53,6 +57,13 @@ public class AverageCalculationPostHandler {
                 Influencer influencer = influencerOptional.get();
                 BeanUtils.copyProperties(average, influencer);
                 influencerRepository.save(influencer);
+
+                Report report = new Report();
+                report.setEngagement(average.getEngagement());
+                report.setType("ENGAGEMENT");
+                report.setInfluencerId(influencer.getId());
+                report.setCreatedDate(new Date());
+                reportRepository.save(report);
             }
         }
 
