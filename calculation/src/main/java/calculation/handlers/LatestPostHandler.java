@@ -2,7 +2,9 @@ package calculation.handlers;
 
 import calculation.documents.InstagramFeed;
 import calculation.documents.InstagramUser;
+import calculation.entities.Influencer;
 import calculation.entities.Post;
+import calculation.repos.InfluencerRepository;
 import calculation.repos.InstagramFeedRepository;
 import calculation.repos.PostRepository;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -20,6 +23,7 @@ import java.util.List;
 public class LatestPostHandler {
     private InstagramFeedRepository instagramFeedRepository;
     private PostRepository postRepository;
+    private InfluencerRepository influencerRepository;
 
     @RabbitListener(queues = "latest-post-queue", containerFactory = "lastestPostContainerFactory")
     public void handler(InstagramUser instagramUser) {
@@ -39,6 +43,13 @@ public class LatestPostHandler {
                 latestPosts.add(post);
             }
             postRepository.saveAll(latestPosts);
+
+            Optional<Influencer> influencerOptional = influencerRepository.findById(instagramUser.getId());
+            if (influencerOptional.isPresent()) {
+                Influencer influencer = influencerOptional.get();
+                influencer.setLastPostTakenAt(lastestFeeds.get(0).getTakenAt());
+                influencerRepository.save(influencer);
+            }
         }
     }
 }
