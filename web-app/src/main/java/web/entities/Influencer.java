@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -39,6 +36,7 @@ public class Influencer {
     private String externalUrl;
     private boolean isVerified;
     private float engagement;
+    private Date lastPostTakenAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_category", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
