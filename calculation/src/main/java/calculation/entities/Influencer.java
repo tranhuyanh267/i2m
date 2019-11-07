@@ -20,6 +20,7 @@ public class Influencer {
     private int followers;
     private int followings;
     private int mediaCount;
+    private int userTagCount;
 
     @Lob
     private String profilePicUrl;
@@ -29,6 +30,7 @@ public class Influencer {
     private String externalUrl;
     private boolean isVerified;
     private boolean isAuthentic;
+    private boolean isPrivate;
     private float engagement;
     private float averageLikePerPost;
     private float averageCommentPerPost;
