@@ -1,24 +1,23 @@
 package crawler.entities;
 
 import lombok.Data;
-import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedItem;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 @Data
-public class InstagramFeed extends InstagramFeedItem {
-
+@Document(collection = "instagramFeed")
+public class InstagramFeed {
     @Id
     private String id;
-    private Date createdDate;
+    private String code;
+    private int commentCount;
+    private int likeCount;
+    private int viewCount;
+    private String content;
+    private String thumbnailUrl;
     private String instagramUserId;
-
-    public InstagramFeed(InstagramFeedItem item) {
-        BeanUtils.copyProperties(item, this);
-        this.id = item.getId();
-        this.createdDate = new Date();
-        this.instagramUserId = String.valueOf(item.getUser().getPk());
-    }
+    private Date takenAt;
+    private Date createdDate;
 }

@@ -61,7 +61,7 @@ public class ConfessionApi {
     public ResponseEntity<?> sendEmail(@RequestParam("attachFile") @Nullable MultipartFile file,
                                        @RequestParam("subject") @NotBlank String subject,
                                        @RequestParam("body") @NotBlank String body,
-                                       @RequestParam("influencerId") String influencerId,
+                                       @RequestParam("instagramUserId") String influencerId,
                                        @CurrentUser UserPrincipal userPrincipal) {
 
         if (!influencerService.checkInfluencerEmail(influencerId)) {
