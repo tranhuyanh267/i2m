@@ -43,6 +43,12 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <version>2.1.9.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.brunocvcunha.instagram4j</groupId>
+            <artifactId>instagram4j</artifactId>
+            <version>1.12</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
