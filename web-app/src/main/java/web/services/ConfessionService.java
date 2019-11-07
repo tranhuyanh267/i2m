@@ -21,8 +21,8 @@ public class ConfessionService {
     @Autowired
     private MessageRepository messageRepository;
 
-
     public MailBox findConfession(String userId, String influencerId) {
+        String id = confessionRepository.findConfessionByUserIdAndInfluencerId(userId, influencerId).getId();
         return confessionRepository.findConfessionByUserIdAndInfluencerId(userId, influencerId);
     }
 

@@ -55,8 +55,7 @@ public class InfluencerService {
         return true;
     }
 
-    public Page<TopInfluencerResponse> findTopInfluencer(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return influencerRepository.findTopInfluencer(pageable);
+    public List<TopInfluencerResponse> findTopInfluencer(int page, int size) {
+        return influencerRepository.findTopInfluencer();
     }
 }

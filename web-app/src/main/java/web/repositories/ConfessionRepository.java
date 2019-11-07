@@ -15,4 +15,5 @@ public interface ConfessionRepository extends JpaRepository<MailBox, String> {
 
     @Query(value = "SELECT * FROM mail_box WHERE user_id = ?1", nativeQuery = true)
     List<MailBox> findConfessionsByUserId(String userId);
+
 }

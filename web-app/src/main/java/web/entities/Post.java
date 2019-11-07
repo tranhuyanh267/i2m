@@ -5,6 +5,7 @@ import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -23,6 +24,7 @@ public class Post {
     private int commentCount;
     private int likeCount;
     private String type;
+    private Date takenAt;
 
     @Lob
     private String content;

@@ -23,7 +23,9 @@ public class Message {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private String id;
+
     private String subject;
+    @Lob
     private String body;
     //if user send multiple file
     private Date sendDate;
@@ -42,4 +44,5 @@ public class Message {
         this.fileUrl = fileUrl;
         this.mailBox = mailBox;
     }
+
 }

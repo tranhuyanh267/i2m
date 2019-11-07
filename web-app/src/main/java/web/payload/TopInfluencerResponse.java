@@ -1,5 +1,7 @@
 package web.payload;
 
+import java.util.Date;
+
 public interface TopInfluencerResponse {
      String getId();
      Integer getMail_count();
@@ -7,12 +9,10 @@ public interface TopInfluencerResponse {
      String getFull_name();
      Integer getFollowers();
      Integer getFollowings();
-     Integer getMedia_count();
      String getProfile_pic_url();
      Float getEngagement();
-     String getBiography();
      String getEmail();
-
-     String getExternal_url();
-     Boolean getIs_verified();
+     Float getAverage_comment_per_post();
+     Float getAverage_like_per_post();
+     Float getWeight();
 }

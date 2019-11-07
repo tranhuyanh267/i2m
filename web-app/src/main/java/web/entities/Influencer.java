@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -27,16 +30,23 @@ public class Influencer {
     private int followers;
     private int followings;
     private int mediaCount;
-
+    private boolean isPrivate;
+    private boolean isAuthentic;
     @Lob
     private String profilePicUrl;
     private String email;
-
+    private int userTagCount;
     @Lob
     private String externalUrl;
     private boolean isVerified;
     private float engagement;
-    private Date lastPostTakenAt;
+    private boolean hasAnonymousProfilePicture;
+
+    private float averageLikePerPost;
+    private float averageCommentPerPost;
+    private float averageViewPerVideo;
+    private float averageEngagementPerVideo;
+    private float averageEngagementPerImage;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "influencer_category", joinColumns = @JoinColumn(name = "influencer_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -47,5 +57,11 @@ public class Influencer {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Post> posts = new ArrayList<>();
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

@@ -26,6 +26,7 @@ import javax.mail.search.FlagTerm;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -115,7 +116,7 @@ public class EmailService {
 
                 // Fill the message
                 messageBodyPart.setText(body);
-                messageBodyPart.setContent(body,"text/html; charset=UTF-8");
+                messageBodyPart.setContent(body, "text/html; charset=UTF-8");
 
                 // Create a multipart message for attachment
                 Multipart multipart = new MimeMultipart();
@@ -130,7 +131,7 @@ public class EmailService {
                 messageBodyPart.setFileName(file.getOriginalFilename());
                 multipart.addBodyPart(messageBodyPart);
                 // Send the complete message parts
-              ///  msg.setContent(multipart);
+                ///  msg.setContent(multipart);
                 msg.setContent(multipart, "text/html; charset=UTF-8");
                 filename = sendFile.getName();
             }
@@ -143,13 +144,20 @@ public class EmailService {
         }
         //Store Confession to DB
         try {
-            MailBox confession = confessionService.findConfession(userId, influencerId);
+            MailBox confession = null;
+            try {
+                confession = confessionService.findConfession(userId, influencerId);
+            } catch (Exception e) {
+
+            }
+
             if (confession == null) {
                 MailBox newConfession = new MailBox();
                 newConfession.setUser(userRepository.findUserByIdCustom(userId));
                 newConfession.setInfluencer(currentInfluencer);
                 confession = confessionService.createConfession(newConfession);
             }
+
             Message newMessage = new Message(subject, body, new Date(), true, filename, confession);
             messageRepository.save(newMessage);
         } catch (Exception e) {
@@ -176,11 +184,47 @@ public class EmailService {
             // find unread message
             javax.mail.Message[] messages = folderInbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
             for (int i = 0; i < messages.length; i++) {
-                javax.mail.Message msg = messages[i];
-                // mark as read
-                folderInbox.setFlags(new javax.mail.Message[]{msg}, new Flags(Flags.Flag.SEEN), true);
-                //
-                detectConfession(messages[i]);
+                try {
+                    javax.mail.Message msg = messages[i];
+                    // mark as read
+                    folderInbox.setFlags(new javax.mail.Message[]{msg}, new Flags(Flags.Flag.SEEN), true);
+                    //
+                    String filename = UUID.randomUUID().toString().replace("-", "");
+                    try {
+                        String contentType = msg.getContentType();
+                        if (contentType.contains("multipart")) {
+                            // this message may contain attachment
+                            Multipart multiPart = (Multipart) msg.getContent();
+                            //Read multi file
+                            for (int j = 0; j < multiPart.getCount(); j++) {
+                                MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(j);
+                                if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                                    InputStream input = part.getInputStream();
+                                    String[] extensions = part.getFileName().split("\\.");
+                                    filename = filename + "." + extensions[extensions.length - 1];
+                                    File result = new File("Media/Mail/" + filename);
+                                    FileOutputStream output = new FileOutputStream(result);
+                                    byte[] buffer = new byte[4096];
+                                    int byteRead;
+                                    while ((byteRead = input.read(buffer)) != -1) {
+                                        output.write(buffer, 0, byteRead);
+                                    }
+                                    output.close();
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Can't read attack file from Influencer!!!");
+                    }
+
+                    if (filename.split("\\.").length <= 1) {
+                        filename = "";
+                    }
+
+                    detectConfession(messages[i], filename);
+                } catch (Exception e) {
+                    System.out.println("Detect Fail!!!");
+                }
             }
             // disconnect
             folderInbox.close(false);
@@ -222,7 +266,7 @@ public class EmailService {
         return properties;
     }
 
-    public void detectConfession(javax.mail.Message msg) throws Exception {
+    public void detectConfession(javax.mail.Message msg, String fileName) throws Exception {
         MimeMultipart mimeMultipart = (MimeMultipart) msg.getContent();
         String allMailContain = getTextFromMimeMultipart(mimeMultipart);
 
@@ -256,18 +300,55 @@ public class EmailService {
             throw new Exception("Can't find sender");
         }
 
-        String mySentMessage = String.join("", receiveMessage.getSentMessage());
-        //My SQl stored "\n" replace "\r ".
-        mySentMessage = mySentMessage.replaceAll("\r ", "\n");
-        //GMAIL sometimes add '\r' or ' ' to end of email.
-        if (mySentMessage.charAt((mySentMessage.length() - 1)) == ' '
-                || mySentMessage.charAt((mySentMessage.length() - 1)) == '\r'
-                || mySentMessage.charAt((mySentMessage.length() - 1)) == '\n') {
-            mySentMessage = mySentMessage.substring(0, mySentMessage.length() - 1);
+        List<Message> messageList = messageRepository.findBySubject(subject);
+
+        List<Message> filterMessageByEmail = new ArrayList<>();
+        for (int i = 0; i < messageList.size(); i++) {
+            if ((messageList.get(i).getMailBox().getInfluencer().getEmail()).equals(from)) {
+                filterMessageByEmail.add(messageList.get(i));
+            }
         }
+        Message oldMessage = null;
+        if (filterMessageByEmail.size() == 1) {
+            oldMessage = filterMessageByEmail.get(0);
+        } else {
+            for (int i = 0; i < filterMessageByEmail.size(); i++) {
+                boolean checkEmail = true;
+                for (String line : receiveMessage.getSentMessage()) {
+                    //remove /r
+                    if (line.charAt(line.length() - 1) == '\r') {
+                        line = line.substring(0, line.length() - 1);
+                    }
+                    //Remove ' '
+                    if (line.length() > 0) {
+                        if (line.charAt(0) == ' ') {
+                            line = line.substring(1);
+                        }
+                    }
+
+                    if (!((messageList.get(i).getBody()).contains(line))) {
+                        checkEmail = false;
+                    }
+                }
+                if (checkEmail == true) {
+                    oldMessage = messageList.get(i);
+                }
+            }
+        }
+
+        //String mySentMessage = String.join("", receiveMessage.getSentMessage());
+        //My SQl stored "\n" replace "\r ".
+        //mySentMessage = mySentMessage.replaceAll("\r ", "\n");
+        //GMAIL sometimes add '\r' or ' ' to end of email.
+        //if (mySentMessage.charAt((mySentMessage.length() - 1)) == ' '
+        //        || mySentMessage.charAt((mySentMessage.length() - 1)) == '\r'
+        //        || mySentMessage.charAt((mySentMessage.length() - 1)) == '\n') {
+        //   mySentMessage = mySentMessage.substring(0, mySentMessage.length() - 1);
+        //}
+
         String myReceiveMessage = String.join("", receiveMessage.getReceiveMessage());
-        Message oldMessage = messageRepository.findByDetail(mySentMessage, subject);
-        Message newMessage = new Message("Re: " + subject, myReceiveMessage, new Date(), false, "", oldMessage.getMailBox());
+        //oldMessage = messageRepository.findByDetail(mySentMessage, subject);
+        Message newMessage = new Message("Re: " + subject, myReceiveMessage, new Date(), false, fileName, oldMessage.getMailBox());
         messageRepository.save(newMessage);
     }
 
@@ -312,7 +393,7 @@ public class EmailService {
         reviveMessage.remove(reviveMessage.size() - 1);
 
         //Remove empty line
-        if(sentMessage.size() > 1){
+        if (sentMessage.size() > 1) {
             sentMessage.remove(0);
         }
 //        if (sentMessage.size() % 2 == 0) {

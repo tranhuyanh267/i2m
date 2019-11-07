@@ -43,5 +43,4 @@ public class User {
     public User(Set<Category> categories) {
         this.categories = categories;
     }
-
 }

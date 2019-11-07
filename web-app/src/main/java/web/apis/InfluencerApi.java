@@ -1,6 +1,15 @@
 package web.apis;
 
 import lombok.AllArgsConstructor;
+import net.minidev.json.JSONObject;
+import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.evaluation.classification.Evaluation;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +29,14 @@ import web.security.CurrentUser;
 import web.security.UserPrincipal;
 import web.services.InfluencerService;
 import web.services.UserService;
+import web.util.InfluencerUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,11 +107,13 @@ public class InfluencerApi {
             }
         }
 
-        List<Influencer> influencers = influencerRepository.suggestTopInfluencer();
-        if(influencers.size() > 0) {
-            return influencers;
-        }
         return influencerRepository.findOrderByFollowersDescLimitTo(9);
+
+    }
+
+    @GetMapping("/load-more")
+    public List<Influencer> fillInToHomePage(@RequestParam(value = "limit") int limit) {
+        return influencerRepository.findOrderByFollowersDescLimitTo(limit);
     }
 
     private PagedResponse<Influencer> normalizeResponse(Page<Influencer> infulenerLists) {
@@ -109,10 +127,90 @@ public class InfluencerApi {
     }
 
     @GetMapping("/ranking")
-    public PagedResponse<TopInfluencerResponse> findTopInfluencers(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+    public List<TopInfluencerResponse> findTopInfluencers(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                                                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        Page<TopInfluencerResponse> influencerResponses = influencerService.findTopInfluencer(page, size);
+        List<TopInfluencerResponse> influencerResponses = influencerService.findTopInfluencer(page, size);
 
-        return new PagedResponse<>(influencerResponses.getContent(), influencerResponses.getNumber(), influencerResponses.getSize(), influencerResponses.getTotalElements(), influencerResponses.getTotalPages(), influencerResponses.isLast());
+        return influencerResponses;
     }
+
+    @GetMapping("/prediction/{id}")
+    public String predictInfluencerProfile(@PathVariable(value = "id") String influencerId) {
+        try {
+            String modelWeights = new ClassPathResource("model_weights.h5").getFile().getPath();
+            String modelJson = new ClassPathResource("model_config.json").getFile().getPath();
+            MultiLayerNetwork network = KerasModelImport.importKerasSequentialModelAndWeights(modelJson, modelWeights);
+
+            Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
+
+            float[] features = new float[16];
+            features[0] = InfluencerUtils.encodeUsername(influencer.getUsername().toLowerCase());
+            features[1] = influencer.getUsername().split("_|\\.| ").length;
+            features[2] = influencer.getFullName().length();
+            features[3] = influencer.getFullName().split("_|\\.| ").length;
+            features[4] = influencer.getFullName().chars().filter(c -> c == '?').count();
+            features[5] = influencer.getBiography().split("_|\\.| ").length;
+            features[6] = influencer.getBiography().chars().filter(c -> c == '?').count();
+            if(influencer.getFollowings() > 0) {
+                features[7] = (float) (influencer.getFollowers() / (influencer.getFollowings() * 1.0));
+            } else {
+                features[7] = 0;
+            }
+            features[8] = influencer.getFollowers();
+            features[9] = influencer.getFollowings();
+            features[10] = influencer.getMediaCount();
+            features[11] = influencer.getUserTagCount();
+            features[12] = influencer.isPrivate() ? 1 : 0;
+            features[13] = influencer.isVerified() ? 1 : 0;
+            features[14] = influencer.isHasAnonymousProfilePicture() ? 1 : 0;
+            features[15] = 1;
+
+            float[][] data = new float[1][16];
+            data[0] = features;
+            INDArray abc = Nd4j.create(data);
+            INDArray result = network.output(abc);
+
+
+            return result.toString();
+        } catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @GetMapping("/toJson")
+    public void generateToJson() throws IOException {
+
+        JSONObject arrayData = new JSONObject();
+        List<Influencer> result = influencerRepository.filterInfluencer();
+        for (Influencer in:
+             result) {
+            JSONObject sampleObject = new JSONObject();
+            sampleObject.put("is_authentic", in.isAuthentic());
+            sampleObject.put("has_anonymous_profile_picture", in.isHasAnonymousProfilePicture());
+            sampleObject.put("following_count", in.getFollowings());
+            sampleObject.put("follower_count", in.getFollowers());
+            sampleObject.put("username", in.getUsername());
+            sampleObject.put("full_name", in.getFullName());
+            if(in.getBiography() == null) {
+                sampleObject.put("biography", "");
+            }
+            else {
+                sampleObject.put("biography", in.getBiography());
+            }
+
+            sampleObject.put("media_count", in.getMediaCount());
+            sampleObject.put("usertags_count", in.getUserTagCount());
+            sampleObject.put("has_anonymous_profile_picture", in.isHasAnonymousProfilePicture());
+            sampleObject.put("is_private", in.isPrivate());
+            sampleObject.put("is_verified", in.isVerified());
+            sampleObject.put("reel_auto_archive", "on");
+
+            arrayData.put(in.getId(), sampleObject);
+        }
+
+        Files.write(Paths.get("classified_profiles.json"), arrayData.toJSONString().getBytes());
+    }
+
+
 }
