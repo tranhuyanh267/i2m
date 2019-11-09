@@ -44,7 +44,7 @@ public class AverageCalculationPostHandler {
             log.info("Handle Average Calculation Post  " + instagramUser.getId());
             MatchOperation match = match(new Criteria("instagramUserId").is(instagramUser.getId()));
             ProjectionOperation project = project("likeCount", "commentCount", "instagramUserId")
-                    .andExpression("(likeCount + viewCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
+                    .andExpression("(likeCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
 
             GroupOperation group = group("instagramUserId")
                     .avg("likeCount").as("averageLikePerPost")

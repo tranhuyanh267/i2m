@@ -42,7 +42,7 @@ class AverageCalculationVideoHandler {
                     .andOperator(new Criteria("viewCount").gt(0)));
 
             ProjectionOperation project = project("instagramUserId", "viewCount")
-                    .andExpression("(likeCount + viewCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
+                    .andExpression("(likeCount + commentCount) / " + instagramUser.getFollowers()).as("engagement");
 
             GroupOperation group = group("instagramUserId")
                     .avg("viewCount").as("averageViewPerVideo")
