@@ -66,7 +66,7 @@ public class PostHandler {
             String influencerId = event.getInfluencerId();
 
             CloseableHttpClient client = HttpClientBuilder.create().build();
-            HttpGet getRequest = new HttpGet("https://www.instagram.com/graphql/query/?query_id=17888483320059182&id=" + influencerId + "&first=24");
+            HttpGet getRequest = new HttpGet("https://www.instagram.com/graphql/query/?query_id=17888483320059182&id=" + influencerId + "&first=50");
             CloseableHttpResponse response = client.execute(getRequest);
             String content = EntityUtils.toString(response.getEntity());
 
