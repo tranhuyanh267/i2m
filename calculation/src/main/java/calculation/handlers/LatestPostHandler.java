@@ -35,7 +35,7 @@ public class LatestPostHandler {
         }
         try {
             log.info("Handle Latest Post " + instagramUser.getId());
-            List<InstagramFeed> lastestFeeds = instagramFeedRepository.findFirst12ByInstagramUserIdOrderByCreatedDateAsc(instagramUser.getId());
+            List<InstagramFeed> lastestFeeds = instagramFeedRepository.findFirst12ByInstagramUserIdOrderByTakenAtDesc(instagramUser.getId());
             if (lastestFeeds.size() > 0) {
                 List<Post> latestPosts = new ArrayList<>();
                 for (int i = 0; i < lastestFeeds.size(); i++) {

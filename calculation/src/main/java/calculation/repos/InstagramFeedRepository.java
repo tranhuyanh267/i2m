@@ -10,7 +10,7 @@ import java.util.List;
 public interface InstagramFeedRepository extends MongoRepository<InstagramFeed, String> {
     List<InstagramFeed> findByInstagramUserId(String instagramUserId);
 
-    List<InstagramFeed> findFirst12ByInstagramUserIdOrderByCreatedDateAsc(String instagramUserId);
+    List<InstagramFeed> findFirst12ByInstagramUserIdOrderByTakenAtDesc(String instagramUserId);
 
     InstagramFeed findFirstByInstagramUserIdOrderByLikeCountDesc(String instagramUserId);
 
