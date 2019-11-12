@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import web.constants.RoleName;
 import web.entities.User;
 import web.exceptions.WebApiReponse;
+import web.exceptions.WebAppException;
 import web.payload.LoginRequest;
 import web.payload.SignUpRequest;
 import web.repositories.CategoryRepository;
@@ -38,6 +39,11 @@ public class AuthenticationApi {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+        User u = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(()->new WebAppException("Not found user"));
+        if(!u.isActive()){
+            return ResponseEntity.badRequest().body(new WebAppException("User is locked"));
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -64,7 +70,7 @@ public class AuthenticationApi {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         user.setCategories(signUpRequest.getCategory());
-
+        user.setActive(true);
         User result = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder

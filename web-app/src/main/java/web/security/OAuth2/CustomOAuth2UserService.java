@@ -1,6 +1,8 @@
 package web.security.OAuth2;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -9,9 +11,11 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import web.constants.RoleName;
 import web.entities.User;
 import web.exceptions.OAuth2AuthenticationProcessingException;
+import web.exceptions.WebAppException;
 import web.repositories.UserRepository;
 import web.security.UserPrincipal;
 
@@ -45,8 +49,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
+
         User user;
-        user = userOptional.orElseGet(() -> registerNewUser(oAuth2UserInfo));
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            if (!user.isActive()) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"User is locked");
+            }
+        } else {
+            user = registerNewUser(oAuth2UserInfo);
+        }
+
         return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
 
