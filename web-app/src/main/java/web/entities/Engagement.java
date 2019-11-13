@@ -26,7 +26,7 @@ public class Engagement {
     private String id;
 
     private float engagement;
-    
+
     private String influencerId;
 
     private float averageLikePerPost;

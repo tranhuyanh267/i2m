@@ -23,8 +23,6 @@ import web.services.PackService;
 import web.services.UserService;
 
 import javax.validation.Valid;
-import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 
 @RestController
@@ -40,11 +38,13 @@ public class UserApi {
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         User userDetails = userService.getUserDetails(userPrincipal.getId());
         String fileNameUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/files/avatar/").path(userDetails.getImgUrl()).toUriString();
-        userDetails.setImgUrl(fileNameUri);
+        if(userDetails.getImgUrl() != null) {
+            userDetails.setImgUrl(fileNameUri);
+        }
+
         if(userDetails.getPassword() != null){
             userDetails.setPassword("1");
         }
-        //System.out.println(userDetails);
         userDetails.getCategories().size();
         return userDetails;
     }
