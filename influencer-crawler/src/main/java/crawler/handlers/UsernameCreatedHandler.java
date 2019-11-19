@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,9 @@ public class UsernameCreatedHandler {
             List<String> categories = event.getCategories().stream().map(this::getCategoryName).collect(Collectors.toList());
             categories.add(instagramUser.getCategory());
             instagramUser.setCategories(categories);
+            if (instagramUser.getCategory() == null || instagramUser.getCategory().length() == 0) {
+                instagramUser.setCategories(Collections.singletonList("Special"));
+            }
             instagramUserRepo.save(instagramUser);
 
             InfluencerCreatedEvent influencerCreatedEvent = new InfluencerCreatedEvent();
