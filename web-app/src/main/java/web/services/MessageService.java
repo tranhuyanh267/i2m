@@ -2,6 +2,7 @@ package web.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import web.entities.Message;
 import web.payload.MessageDetailResponse;
 import web.repositories.MessageRepository;
@@ -22,13 +23,16 @@ public class MessageService {
         List<MessageDetailResponse> result = new ArrayList<>();
         List<Message> messageList = messageRepository.findByConfessionId(confessionId);
 
+
         for (Message message : messageList) {
+            String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/files/download/").path(message.getFileUrl()).toUriString();
             result.add(new MessageDetailResponse(message.getId(), message.getBody(),
-                    message.isSended(), message.getSendDate(), message.getSubject(), message.getFileUrl(),
+                    message.isSended(), message.getSendDate(), message.getSubject(), fileUri,
                     message.getMailBox().getInfluencer().getFullName(),
                     message.getMailBox().getUser().getFullName(),
                     message.getMailBox().getUser().getEmail(),
-                    message.getMailBox().getInfluencer().getEmail()
+                    message.getMailBox().getInfluencer().getEmail(),
+                    message.getFileUrl()
             ));
         }
         return result;

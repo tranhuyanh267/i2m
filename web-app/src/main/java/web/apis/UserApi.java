@@ -2,11 +2,16 @@ package web.apis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import web.entities.Pack;
 import web.entities.User;
 import web.exceptions.WebApiReponse;
@@ -32,11 +37,15 @@ public class UserApi {
     @GetMapping("/self")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         User userDetails = userService.getUserDetails(userPrincipal.getId());
+        String fileNameUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/files/avatar/").path(userDetails.getImgUrl()).toUriString();
+        if(userDetails.getImgUrl() != null) {
+            userDetails.setImgUrl(fileNameUri);
+        }
+
         if(userDetails.getPassword() != null){
             userDetails.setPassword("1");
         }
-        System.out.println(userDetails);
-
+        userDetails.getCategories().size();
         return userDetails;
     }
 
@@ -67,6 +76,7 @@ public class UserApi {
         return userService.updateAvatar(img, userId) ? ResponseEntity.ok("Update Successfully!!!")
                 : ResponseEntity.badRequest().body("Update Fail!!!");
     }
+
 
     @PutMapping("/{userId}/update")
     //@PreAuthorize("hasRole('USER')")

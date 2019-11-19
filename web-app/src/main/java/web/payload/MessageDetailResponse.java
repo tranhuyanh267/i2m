@@ -12,7 +12,7 @@ public class MessageDetailResponse {
     private Date sendDate;
     private String subject;
     private String fileUrl;
-
+    private String fileName;
     private String influName;
     private String fullName;
     private String email;
@@ -27,7 +27,7 @@ public class MessageDetailResponse {
         this.fileUrl = fileUrl;
     }
 
-    public MessageDetailResponse(String id, String body, boolean isSent, Date sendDate, String subject, String fileUrl, String influName, String fullName, String email, String influEmail) {
+    public MessageDetailResponse(String id, String body, boolean isSent, Date sendDate, String subject, String fileUrl, String influName, String fullName, String email, String influEmail, String fileName) {
         this.id = id;
         this.body = body;
         this.isSent = isSent;
@@ -38,6 +38,7 @@ public class MessageDetailResponse {
         this.fullName = fullName;
         this.email = email;
         this.influEmail = influEmail;
+        this.fileName = fileName;
     }
 
 }

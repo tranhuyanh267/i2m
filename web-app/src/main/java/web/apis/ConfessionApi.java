@@ -118,31 +118,5 @@ public class ConfessionApi {
     }
 
 
-    @GetMapping("/Download/{fileName}")
-    public ResponseEntity<?> downloadFile(@PathVariable String fileName, @CurrentUser UserPrincipal userPrincipal) {
-        try {
-            if(!messageService.checkOwnedFile(userPrincipal.getId(), fileName)){
-                throw new Exception("File not found!!!");
-            }
-            File file = new File("Media/Mail/" + fileName);
-            Resource resource = new UrlResource(file.toURI());
-            // Try to determine file's content type
-            String contentType = null;
-            try {
-                contentType = Files.probeContentType(file.toPath());
-            } catch (Exception e) {
-                //logger.info("Could not determine file type.");
-            }
-            // Fallback to the default content type if type could not be determined
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("File not found!!!");
-        }
-    }
+
 }
