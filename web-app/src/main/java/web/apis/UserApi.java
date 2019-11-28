@@ -37,10 +37,6 @@ public class UserApi {
     @GetMapping("/self")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         User userDetails = userService.getUserDetails(userPrincipal.getId());
-        String fileNameUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/files/avatar/").path(userDetails.getImgUrl()).toUriString();
-        if(userDetails.getImgUrl() != null) {
-            userDetails.setImgUrl(fileNameUri);
-        }
 
         if(userDetails.getPassword() != null){
             userDetails.setPassword("1");

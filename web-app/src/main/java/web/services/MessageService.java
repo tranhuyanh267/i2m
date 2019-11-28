@@ -25,14 +25,13 @@ public class MessageService {
 
 
         for (Message message : messageList) {
-            String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/files/download/").path(message.getFileUrl()).toUriString();
             result.add(new MessageDetailResponse(message.getId(), message.getBody(),
-                    message.isSended(), message.getSendDate(), message.getSubject(), fileUri,
+                    message.isSended(), message.getSendDate(), message.getSubject(), message.getFileUrl(),
                     message.getMailBox().getInfluencer().getFullName(),
                     message.getMailBox().getUser().getFullName(),
                     message.getMailBox().getUser().getEmail(),
                     message.getMailBox().getInfluencer().getEmail(),
-                    message.getFileUrl()
+                    message.getFileName()
             ));
         }
         return result;

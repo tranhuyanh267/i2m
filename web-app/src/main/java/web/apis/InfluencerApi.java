@@ -1,5 +1,6 @@
 package web.apis;
 
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
@@ -7,9 +8,13 @@ import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurat
 import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.evaluation.classification.Evaluation;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.iter.NdIndexIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.io.ClassPathResource;
+import org.nd4j.linalg.util.NDArrayUtil;
+import org.nd4j.util.Index;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -134,49 +139,70 @@ public class InfluencerApi {
         return influencerResponses;
     }
 
-    @GetMapping("/prediction/{id}")
-    public String predictInfluencerProfile(@PathVariable(value = "id") String influencerId) {
+    @GetMapping("/prediction")
+    public float[] predictInfluencerProfile() {
         try {
             String modelWeights = new ClassPathResource("model_weights.h5").getFile().getPath();
             String modelJson = new ClassPathResource("model_config.json").getFile().getPath();
             MultiLayerNetwork network = KerasModelImport.importKerasSequentialModelAndWeights(modelJson, modelWeights);
 
-            Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
-
-            float[] features = new float[16];
-            features[0] = InfluencerUtils.encodeUsername(influencer.getUsername().toLowerCase());
-            features[1] = influencer.getUsername().split("_|\\.| ").length;
-            features[2] = influencer.getFullName().length();
-            features[3] = influencer.getFullName().split("_|\\.| ").length;
-            features[4] = influencer.getFullName().chars().filter(c -> c == '?').count();
-            features[5] = influencer.getBiography().split("_|\\.| ").length;
-            features[6] = influencer.getBiography().chars().filter(c -> c == '?').count();
-            if(influencer.getFollowings() > 0) {
-                features[7] = (float) (influencer.getFollowers() / (influencer.getFollowings() * 1.0));
-            } else {
-                features[7] = 0;
+            List<Influencer> influencers = influencerRepository.findByAuthentic();
+            float[][] data = new float[influencers.size()][15];
+            for (int i = 0; i < influencers.size() - 1; i++) {
+                Influencer influencer = influencers.get(i);
+                float[] features = new float[15];
+                features[0] = InfluencerUtils.encodeUsername(influencer.getUsername().toLowerCase());
+                features[1] = influencer.getUsername().split("_|\\.| ").length;
+                features[2] = influencer.getFullName().length();
+                features[3] = influencer.getFullName().split("_|\\.| ").length;
+                features[4] = influencer.getFullName().chars().filter(c -> c == '?').count();
+                if(influencer.getBiography() == null) {
+                    influencer.setBiography("");
+                }
+                features[5] = influencer.getBiography().split("_|\\.| ").length;
+                features[6] = influencer.getBiography().chars().filter(c -> c == '?').count();
+                if(influencer.getFollowings() > 0) {
+                    features[7] = (float) (influencer.getFollowers() / (influencer.getFollowings() * 1.0));
+                } else {
+                    features[7] = 0;
+                }
+                features[8] = influencer.getFollowers();
+                features[9] = influencer.getFollowings();
+                features[10] = influencer.getMediaCount();
+                features[11] = influencer.getUserTagCount();
+                features[12] = influencer.isPrivate() ? 1 : 0;
+                features[13] = influencer.isVerified() ? 1 : 0;
+                features[14] = influencer.isHasAnonymousProfilePicture() ? 1 : 0;
+                data[i] = features;
             }
-            features[8] = influencer.getFollowers();
-            features[9] = influencer.getFollowings();
-            features[10] = influencer.getMediaCount();
-            features[11] = influencer.getUserTagCount();
-            features[12] = influencer.isPrivate() ? 1 : 0;
-            features[13] = influencer.isVerified() ? 1 : 0;
-            features[14] = influencer.isHasAnonymousProfilePicture() ? 1 : 0;
-            features[15] = 1;
 
-            float[][] data = new float[1][16];
-            data[0] = features;
+
+
+
             INDArray abc = Nd4j.create(data);
             INDArray result = network.output(abc);
+            DataBuffer dataBuffer = result.data();
+            List<Influencer> newInfluencers = new ArrayList<>();
 
+           float[] intRes = dataBuffer.asFloat();
+            for (int i = 0; i < intRes.length - 1; i++) {
+                if(intRes[i] >= 0.8757) {
+                    newInfluencers.add(influencers.get(i));
+                }
+            }
 
-            return result.toString();
+            for (Influencer i:
+                 newInfluencers) {
+                i.setAuthentic(true);
+                influencerRepository.save(i);
+            }
+            return intRes;
         } catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 
     @GetMapping("/toJson")
     public void generateToJson() throws IOException {
@@ -204,7 +230,6 @@ public class InfluencerApi {
             sampleObject.put("has_anonymous_profile_picture", in.isHasAnonymousProfilePicture());
             sampleObject.put("is_private", in.isPrivate());
             sampleObject.put("is_verified", in.isVerified());
-            sampleObject.put("reel_auto_archive", "on");
 
             arrayData.put(in.getId(), sampleObject);
         }

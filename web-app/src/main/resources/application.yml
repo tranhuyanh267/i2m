@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://35.240.134.127:3306/i2m
+    url: jdbc:mysql://localhost:3306/i2m
     username: root
-    password: 123
+    password: 123456789
     sqlScriptEncoding: UTF-8
 
   servlet:
@@ -21,6 +21,18 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: flowershower282@gmail.com
+    password: vannguyen2802
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   security:
     oauth2:

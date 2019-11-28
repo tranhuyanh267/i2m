@@ -8,8 +8,10 @@ import web.repositories.ConfessionRepository;
 import web.repositories.InfluencerRepository;
 import web.repositories.MessageRepository;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ConfessionService {
@@ -22,8 +24,7 @@ public class ConfessionService {
     private MessageRepository messageRepository;
 
     public MailBox findConfession(String userId, String influencerId) {
-        String id = confessionRepository.findConfessionByUserIdAndInfluencerId(userId, influencerId).getId();
-        return confessionRepository.findConfessionByUserIdAndInfluencerId(userId, influencerId);
+        return confessionRepository.findByUserIdAndInfluencerId(userId, influencerId).orElse(null);
     }
 
     public MailBox createConfession(MailBox confession) {

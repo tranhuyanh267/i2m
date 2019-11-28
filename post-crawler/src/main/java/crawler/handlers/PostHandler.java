@@ -87,7 +87,7 @@ public class PostHandler {
 
 
         } catch (Exception e) {
-            System.out.println("errpr");
+            System.out.println("error");
             eventBus.emit(event);
         }
     }

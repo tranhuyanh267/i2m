@@ -47,4 +47,9 @@ public interface InfluencerRepository extends JpaRepository<Influencer, String> 
     @Query(value = "select * from influencer where followers > 1000 limit 5000", nativeQuery = true)
     List<Influencer> filterInfluencer();
 
+    Influencer findByEmail(String email);
+
+    @Query(value = "select * from influencer where is_authentic = false", nativeQuery = true)
+    List<Influencer> findByAuthentic();
+
 }
