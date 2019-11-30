@@ -4,12 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>web-app</module>
-        <module>crawler-common</module>
-        <module>post-crawler</module>
-        <module>influencer-crawler</module>
         <module>calculation</module>
-        <module>craw-management</module>
-        <module>comment-crawler</module>
         <module>instagram-crawler</module>
     </modules>
 
