@@ -1,5 +1,6 @@
 package crawler.workers;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import crawler.documents.InstagramUser;
 import crawler.messages.UserIdMessage;
 import crawler.messages.UsernameMessage;
@@ -14,6 +15,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

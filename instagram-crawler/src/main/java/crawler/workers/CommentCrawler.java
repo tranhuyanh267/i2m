@@ -24,7 +24,7 @@ public class CommentCrawler {
     private InstagramCommentRepository instagramCommentRepository;
     private RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = "feed-id-queue")
+    @RabbitListener(queues = "feed-id-queue", containerFactory = "influencerContainerFactory")
     public void handle(FeedIdMessage message) {
         try {
             String feedId = message.getFeedId();
