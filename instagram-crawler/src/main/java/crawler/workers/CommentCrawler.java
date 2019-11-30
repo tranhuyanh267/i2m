@@ -35,14 +35,16 @@ public class CommentCrawler {
                 return;
             }
             List<InstagramComment> comments = result.getComments();
-            List<crawler.documents.InstagramComment> instagramComments = comments.stream().map(comment -> {
-                crawler.documents.InstagramComment instagramComment = new crawler.documents.InstagramComment();
-                instagramComment.setId(String.valueOf(comment.getPk()));
-                instagramComment.setContent(comment.getText());
-                instagramComment.setFeedId(feedId);
-                return instagramComment;
-            }).collect(Collectors.toList());
-            instagramCommentRepository.saveAll(instagramComments);
+            if (comments != null) {
+                List<crawler.documents.InstagramComment> instagramComments = comments.stream().map(comment -> {
+                    crawler.documents.InstagramComment instagramComment = new crawler.documents.InstagramComment();
+                    instagramComment.setId(String.valueOf(comment.getPk()));
+                    instagramComment.setContent(comment.getText());
+                    instagramComment.setFeedId(feedId);
+                    return instagramComment;
+                }).collect(Collectors.toList());
+                instagramCommentRepository.saveAll(instagramComments);
+            }
         } catch (Exception ex) {
             rabbitTemplate.convertAndSend("feed-id-queue", message);
             log.error(ex.getMessage());
