@@ -10,17 +10,21 @@ import web.exceptions.WebAppException;
 import web.model.UpdatePasswordModel;
 import web.model.UserUpdateModel;
 import web.repositories.UserRepository;
+import web.util.GoogleCloudHelper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Service
 @AllArgsConstructor
 public class UserService {
+//    private static Storage storage = null;
+//
+//    static {
+//        storage = StorageOptions.getDefaultInstance().getService();
+//    }
 
     @Autowired
     private UserRepository userRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,29 +34,17 @@ public class UserService {
     }
 
     public boolean updateAvatar(MultipartFile file, String userId) {
-        String fileNameExtension = (file.getOriginalFilename().split("\\.")[file.getOriginalFilename().split("\\.").length - 1]).toLowerCase();
-        String fileName = userId + "." + fileNameExtension;
+
         try {
-            this.userRepository.updateImageUrl(userId, fileName);
-            fileStore(file, userId + "");
+            String imageUrl = GoogleCloudHelper.uploadFile(file, userId);
+            this.userRepository.updateImageUrl(userId, imageUrl);
+
         } catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    private static File fileStore(MultipartFile file, String filename) throws IOException {
-        //File Rename
-        String[] extensions = file.getOriginalFilename().split("\\.");
-        filename = filename + "." + extensions[extensions.length - 1];
-        File result = new File("Media/User/" + filename);
-        //File Store
-        result.createNewFile();
-        FileOutputStream fos = new FileOutputStream(result);
-        fos.write(file.getBytes());
-        fos.close();
-        return result;
-    }
 
     public User updateUser(UserUpdateModel newUser,String userId){
         User user = userRepository.findById(userId)

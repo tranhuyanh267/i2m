@@ -1,18 +1,13 @@
 package web.apis;
 
-import org.apache.commons.io.IOUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.nio.ch.IOUtil;
 import web.payload.AllConfessionResponse;
 import web.payload.MessageDetailResponse;
-import web.repositories.InfluencerRepository;
 import web.security.CurrentUser;
 import web.security.UserPrincipal;
 import web.services.ConfessionService;
@@ -21,24 +16,7 @@ import web.services.InfluencerService;
 import web.services.MessageService;
 
 import javax.validation.constraints.NotBlank;
-import java.io.*;
 import java.util.List;
-
-import org.springframework.core.io.Resource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 
 @RestController
@@ -60,7 +38,7 @@ public class ConfessionApi {
     @GetMapping("")
     public ResponseEntity<?> allConfession(@CurrentUser UserPrincipal userPrincipal) {
         try {
-            emailService.downloadEmailsFromInbox();
+            emailService.downloadEmailsFromInbox(userPrincipal.getId());
         } catch (Exception e) {
 
         }
@@ -72,7 +50,7 @@ public class ConfessionApi {
     public ResponseEntity<?> confessionMessage(
             @PathVariable(value = "influencerId") String influencerId,
             @CurrentUser UserPrincipal userPrincipal) {
-        emailService.downloadEmailsFromInbox();
+        emailService.downloadEmailsFromInbox(userPrincipal.getId());
         String confessionId = confessionService.findConfession(userPrincipal.getId(), influencerId).getId();
         if (!confessionService.checkConfessionExist(userPrincipal.getId(), confessionId)) {
             return ResponseEntity.badRequest().body("Confession doesn't exist!!!");
@@ -110,7 +88,7 @@ public class ConfessionApi {
         }
 
         try {
-            emailService.send(file, subject, body, userPrincipal.getId(), influencerId);
+            emailService.sendMessageWithAttachment(userPrincipal.getId(), influencerId, subject, body,file);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -31,18 +31,19 @@ public class Message {
     private Date sendDate;
     private boolean isSended;
     private String fileUrl;
-
+    private String fileName;
     @ManyToOne()
     @JoinColumn(name = "mail_id")
     private MailBox mailBox;
 
-    public Message(String subject, String body, Date sendDate, boolean isSended, String fileUrl, MailBox mailBox) {
+    public Message(String subject, String body, Date sendDate, boolean isSended, String fileUrl, String fileName, MailBox mailBox) {
         this.subject = subject;
         this.body = body;
         this.sendDate = sendDate;
         this.isSended = isSended;
         this.fileUrl = fileUrl;
         this.mailBox = mailBox;
+        this.fileName = fileName;
     }
 
 }
