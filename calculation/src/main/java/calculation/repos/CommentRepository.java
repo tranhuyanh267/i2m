@@ -1,4 +1,9 @@
 package calculation.repos;
 
-public class CommentRepository {
+import calculation.entities.Comment;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CommentRepository extends CrudRepository<Comment, String> {
 }
