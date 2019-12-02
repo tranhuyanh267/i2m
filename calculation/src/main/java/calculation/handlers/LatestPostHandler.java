@@ -39,30 +39,33 @@ public class LatestPostHandler {
         try {
             log.info("Handle Latest Post " + instagramUser.getId());
             List<InstagramFeed> lastestFeeds = instagramFeedRepository.findFirst12ByInstagramUserIdOrderByTakenAtDesc(instagramUser.getId());
+            List<Comment> commentBatch = new ArrayList<>();
             if (lastestFeeds.size() > 0) {
                 List<Post> latestPosts = new ArrayList<>();
                 for (int i = 0; i < lastestFeeds.size(); i++) {
+                    InstagramFeed feed = lastestFeeds.get(i);
                     Post post = new Post();
-                    BeanUtils.copyProperties(lastestFeeds.get(i), post);
+                    BeanUtils.copyProperties(feed, post);
                     post.setId(instagramUser.getId() + "-" + (i + 1));
                     post.setInfluencerId(instagramUser.getId());
                     post.setType("LATEST");
                     latestPosts.add(post);
-                }
-                postRepository.saveAll(latestPosts);
 
-                List<String> ids = lastestFeeds.stream().map(InstagramFeed::getId).collect(Collectors.toList());
-                List<InstagramComment> comments = instagramCommentRepository.findByFeedIdIsIn(ids);
-                if (!CollectionUtils.isEmpty(comments)) {
-                    List<Comment> collect = comments.stream().map(comment -> {
-                        Comment c = new Comment();
-                        c.setId(comment.getId());
-                        c.setContent(comment.getContent());
-                        c.setPostId(comment.getFeedId());
-                        return c;
-                    }).collect(Collectors.toList());
-                    commentRepository.saveAll(collect);
+
+                    List<InstagramComment> comments = instagramCommentRepository.findByFeedId(feed.getId());
+                    if (!CollectionUtils.isEmpty(comments)) {
+                        List<Comment> collect = comments.stream().map(comment -> {
+                            Comment c = new Comment();
+                            c.setId(comment.getId());
+                            c.setContent(comment.getContent());
+                            c.setPostId(post.getId());
+                            return c;
+                        }).collect(Collectors.toList());
+                        commentBatch.addAll(collect);
+                    }
                 }
+                commentRepository.saveAll(commentBatch);
+                postRepository.saveAll(latestPosts);
 
                 Optional<Influencer> influencerOptional = influencerRepository.findById(instagramUser.getId());
                 if (influencerOptional.isPresent()) {

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface InstagramCommentRepository extends MongoRepository<InstagramComment, String> {
-    List<InstagramComment> findByFeedIdIsIn(List<String> ids);
+    List<InstagramComment> findByFeedId(String feedId);
 }
