@@ -31,7 +31,7 @@ public class LatestPostHandler {
     private CommentRepository commentRepository;
     private InstagramCommentRepository instagramCommentRepository;
 
-    @RabbitListener(queues = "latest-post-queue", containerFactory = "influencerContainerFactory")
+    @RabbitListener(queues = "latest-post-queue")
     public void handler(InstagramUser instagramUser) {
         if (instagramUser.getMediaCount() <= 0 || instagramUser.isPrivate() || instagramUser.getFollowers() <= 0) {
             return;
