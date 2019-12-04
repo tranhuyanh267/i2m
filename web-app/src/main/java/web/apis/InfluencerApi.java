@@ -13,19 +13,17 @@ import org.nd4j.linalg.api.iter.NdIndexIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.io.ClassPathResource;
-import org.nd4j.linalg.util.NDArrayUtil;
-import org.nd4j.util.Index;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import web.constants.AppConstants;
-import web.entities.Category;
 import web.entities.Influencer;
 import web.entities.User;
-import web.exceptions.WebAppException;
+import web.exceptions.WebApiReponse;
 import web.payload.InfluencerMyListRequest;
 import web.payload.PagedResponse;
 import web.payload.TopInfluencerResponse;
@@ -86,17 +84,18 @@ public class InfluencerApi {
 
     @GetMapping("/{id}")
     public Influencer getInfluencerDetail(@PathVariable(value = "id") String influencerId) {
-        Influencer influencer = influencerRepository.findById(influencerId).orElseThrow(() -> new WebAppException("User id not found " + influencerId));
-        influencer.getCategories().size();
 
-        influencer.getPosts().forEach(item -> item.setInfluencer(null));
-        return influencer;
+        return influencerService.getInfluencerDetail(influencerId);
 
     }
 
     @PutMapping("/{id}")
-    public Influencer addToPack(@PathVariable(value = "id") String influencerId, @RequestBody InfluencerMyListRequest influencerMyListRequest) {
-        return this.influencerService.addInfluencerToPack(influencerId, influencerMyListRequest.getPackId());
+    public ResponseEntity<?> addToPack(@PathVariable(value = "id") String influencerId, @RequestBody InfluencerMyListRequest influencerMyListRequest) {
+        String result = this.influencerService.addInfluencerToPack(influencerId, influencerMyListRequest.getPackId());
+        if(result != "") {
+            return ResponseEntity.badRequest().body(new WebApiReponse(false, result));
+        }
+        return ResponseEntity.ok(new WebApiReponse(true, result));
     }
 
 

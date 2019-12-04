@@ -1,14 +1,19 @@
 package web.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import web.dtos.InfluencerDto;
+import web.dtos.PackDto;
 import web.entities.Influencer;
 import web.entities.Pack;
+import web.payload.PackDetail;
 import web.repositories.InfluencerRepository;
 import web.repositories.PackRepository;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,17 +44,17 @@ public class PackService {
         return pack;
     }
 
-    public Pack update(String id, Pack updateInfo) {
+    public PackDetail update(String id, Pack updateInfo) {
         Optional<Pack> packOpt = this.packRepository.findById(id);
         if (packOpt.isPresent()) {
             Pack pack = packOpt.get();
             pack.setName(updateInfo.getName());
-            return this.packRepository.save(pack);
+            return transformPack(this.packRepository.save(pack));
         }
         return null;
     }
 
-    public Pack removeAnInfluencer(String id, String influencerId) {
+    public PackDetail removeAnInfluencer(String id, String influencerId) {
         Optional<Pack> packOpt = this.packRepository.findById(id);
         Optional<Influencer> influencerOpt = this.influencerRepository.findById(influencerId);
 
@@ -58,13 +63,32 @@ public class PackService {
             Influencer influencer = influencerOpt.get();
             if(pack.getInfluencers().remove(influencer)) {
                 pack.setInfluencers(pack.getInfluencers());
-                return this.packRepository.save(pack);
+
+                return transformPack(this.packRepository.save(pack));
             }
 
         }
+
         return null;
     }
 
+    public PackDetail transformPack(Pack pack) {
+        List<InfluencerDto> influencerDtos = new ArrayList<>();
+
+        pack.getInfluencers().forEach(in -> {
+            in.setPosts(null);
+            List<Pack> packs = this.findPackByInfluencer(in.getId());
+
+            InfluencerDto influencerDto = new InfluencerDto();
+            BeanUtils.copyProperties(in, influencerDto);
+            influencerDto.setPacks(packs.stream().map(p -> new PackDto(p.getName())).collect(Collectors.toList()));
+            influencerDtos.add(influencerDto);
+
+        });
+
+        PackDetail packDetail = new PackDetail(pack.getId(), pack.getName(), influencerDtos);
+        return packDetail;
+    }
     public Pack findById(String id) {
         return this.packRepository.findById(id).orElse(null);
     }
@@ -75,5 +99,9 @@ public class PackService {
 
     public Pack create(Pack pack) {
         return this.packRepository.save(pack);
+    }
+
+    public List<Pack> findPackByInfluencer(String influencerId) {
+        return this.packRepository.findByInfluencerId(influencerId);
     }
 }

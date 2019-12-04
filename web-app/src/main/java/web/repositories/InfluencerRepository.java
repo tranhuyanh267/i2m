@@ -31,7 +31,7 @@ public interface InfluencerRepository extends JpaRepository<Influencer, String> 
 
     Optional<Influencer> findById(String id);
 
-    @Query(value = "SELECT * FROM influencer i inner join influencer_category ic on ic.influencer_id = i.id where category_id in (?1) order by i.followers desc limit 9", nativeQuery = true)
+    @Query(value = "select * from (SELECT i.*, count(ic.category_id) as numOfCategory FROM influencer i inner join influencer_category ic on ic.influencer_id = i.id where category_id in (?1) group by i.id) as temp order by numOfCategory desc, followers desc limit 9", nativeQuery = true)
     List<Influencer> findByUserCategory(List<String> categories);
 
     @Query(value = "select * from (select i.full_name, mail_count, i.username, i.email, i.profile_pic_url, i.id, i.followers, i.followings, i.average_like_per_post, i.average_comment_per_post, i.engagement, (i.average_like_per_post*0.2 + i.average_comment_per_post*0.2 + i.engagement*0.3 + ifnull(mail_count, 0)*0.3) / datediff(now(), last_post_taken_at) as weight from influencer i " +

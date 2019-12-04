@@ -1,19 +1,17 @@
 package web.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import web.entities.Influencer;
 import web.entities.Pack;
+import web.exceptions.WebAppException;
 import web.payload.TopInfluencerResponse;
+import web.repositories.CommentRepository;
 import web.repositories.InfluencerRepository;
 import web.repositories.PackRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 
 @Service
 @AllArgsConstructor
@@ -23,19 +21,26 @@ public class InfluencerService {
     private PackRepository packRepository;
     private PackService packService;
 
-    public Influencer addInfluencerToPack(String influencerId, String packId) {
+
+    public String addInfluencerToPack(String influencerId, String packId) {
         Pack pack = packService.findById(packId);
+        if(pack == null) {
+            return "pack_not_found";
+        }
         Optional<Influencer> influencerOpt = influencerRepository.findById(influencerId);
 
         if (influencerOpt.isPresent()) {
             if (pack != null) {
+                if(pack.getInfluencers().contains(influencerOpt.get())) {
+                    return "existing_influencer";
+                }
                 Influencer influencer = influencerOpt.get();
                 pack.getInfluencers().add(influencer);
                 pack.setInfluencers(pack.getInfluencers());
                 packRepository.save(pack);
             }
         }
-        return null;
+        return "";
     }
 
     public boolean checkInfluencerEmail(String influencerId) {
@@ -57,5 +62,17 @@ public class InfluencerService {
 
     public List<TopInfluencerResponse> findTopInfluencer(int page, int size) {
         return influencerRepository.findTopInfluencer();
+    }
+
+    public Influencer getInfluencerDetail(String id) {
+        Influencer influencer = influencerRepository.findById(id).orElseThrow(() -> new WebAppException("User id not found " + id));
+        influencer.getCategories().size();
+
+        influencer.getPosts().forEach(item -> {
+            item.setInfluencer(null);
+
+        });
+
+        return influencer;
     }
 }

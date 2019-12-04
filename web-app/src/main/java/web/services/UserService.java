@@ -16,11 +16,6 @@ import web.util.GoogleCloudHelper;
 @Service
 @AllArgsConstructor
 public class UserService {
-//    private static Storage storage = null;
-//
-//    static {
-//        storage = StorageOptions.getDefaultInstance().getService();
-//    }
 
     @Autowired
     private UserRepository userRepository;
