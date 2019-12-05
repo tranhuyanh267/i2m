@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Service
 public class GoogleCloudService {
 
-    @Value("app.credentialPath")
+    @Value("${app.credentialPath}")
     private String credentialPath;
 
     public String uploadFile(MultipartFile file, String fileName) throws IOException {
