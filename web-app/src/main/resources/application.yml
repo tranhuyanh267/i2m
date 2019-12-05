@@ -9,7 +9,7 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 25MB
-      
+
   rabbitmq:
     host: 35.240.130.146
     port: 30069
@@ -52,6 +52,9 @@ spring:
 app:
   jwtSecret: 926D96C90030DD58429D2751AC1BDBBC
   jwtExpirationInMs: 864000000
+  credentialPath: ${CREDENTIAL_PATH:i2m-credentials.json}
   oauth2:
     authorizedRedirectUris:
-      - http://localhost:3000
+      - ${AUTHORIZED_REDIRECT_URI:http://localhost:3000}
+
+

@@ -1,4 +1,4 @@
-package web.util;
+package web.services;
 
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -6,17 +6,24 @@ import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class GoogleCloudHelper {
-    public static String uploadFile(MultipartFile file, String fileName) throws IOException {
-        Resource resource = new ClassPathResource("i2m-credentials.json");
+@Service
+public class GoogleCloudService {
+
+    @Value("app.credentialPath")
+    private String credentialPath;
+
+    public String uploadFile(MultipartFile file, String fileName) throws IOException {
+        Resource resource = new ClassPathResource(credentialPath);
         File credentialsFile = resource.getFile();
         Credentials credentials = GoogleCredentials
                 .fromStream(new FileInputStream(credentialsFile));
@@ -45,8 +52,8 @@ public class GoogleCloudHelper {
         return blobInfo.getMediaLink();
     }
 
-    public static String uploadFileFromInputStream(InputStream is, String fileName) throws IOException {
-        Resource resource = new ClassPathResource("i2m-credentials.json");
+    public String uploadFileFromInputStream(InputStream is, String fileName) throws IOException {
+        Resource resource = new ClassPathResource(credentialPath);
         File credentialsFile = resource.getFile();
         Credentials credentials = GoogleCredentials
                 .fromStream(new FileInputStream(credentialsFile));

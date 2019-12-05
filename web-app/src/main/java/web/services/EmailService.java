@@ -1,11 +1,10 @@
 package web.services;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.lang.Nullable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,13 +16,8 @@ import web.model.ReceiveMessageModel;
 import web.repositories.InfluencerRepository;
 import web.repositories.MessageRepository;
 import web.repositories.UserRepository;
-import web.util.GoogleCloudHelper;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -38,25 +32,18 @@ import java.util.regex.Pattern;
 
 @Service
 @EnableScheduling
+@AllArgsConstructor
 public class EmailService {
     //This email must be enable 'Less Secure Apps' allow
     private final String MY_EMAIL_ADDRESS = "flowershower282@gmail.com";
     private final String MY_EMAIL_PASSWORD = "vannguyen2802";
 
-    @Autowired
-    public JavaMailSender emailSender;
-
-    @Autowired
-    ConfessionService confessionService;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    InfluencerRepository influencerRepository;
-
-    @Autowired
-    MessageRepository messageRepository;
+    private JavaMailSender emailSender;
+    private ConfessionService confessionService;
+    private UserRepository userRepository;
+    private InfluencerRepository influencerRepository;
+    private MessageRepository messageRepository;
+    private GoogleCloudService googleCloudService;
 
 
     public void sendMessageWithAttachment(String userId, String influencerId,
@@ -87,7 +74,7 @@ public class EmailService {
             emailSender.send(message);
             if(attachement != null) {
                 String uuid = UUID.randomUUID().toString().replace("-", "");
-                uploadedFileLink = GoogleCloudHelper.uploadFile(attachement, uuid);
+                uploadedFileLink = googleCloudService.uploadFile(attachement, uuid);
             }
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
@@ -162,7 +149,7 @@ public class EmailService {
                                     InputStream input = part.getInputStream();
 
                                     filename = part.getFileName();
-                                    mediaLink = GoogleCloudHelper.uploadFileFromInputStream(input, filename);
+                                    mediaLink = googleCloudService.uploadFileFromInputStream(input, filename);
                                 }
                             }
 

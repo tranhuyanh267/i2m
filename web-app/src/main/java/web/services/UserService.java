@@ -10,19 +10,17 @@ import web.exceptions.WebAppException;
 import web.model.UpdatePasswordModel;
 import web.model.UserUpdateModel;
 import web.repositories.UserRepository;
-import web.util.GoogleCloudHelper;
 
 
 @Service
 @AllArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private GoogleCloudService googleCloudService;
 
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public User getUserDetails(String id) {
         return this.userRepository.findById(id).orElseThrow(() -> new WebAppException("User id not found " + id));
@@ -31,7 +29,7 @@ public class UserService {
     public boolean updateAvatar(MultipartFile file, String userId) {
 
         try {
-            String imageUrl = GoogleCloudHelper.uploadFile(file, userId);
+            String imageUrl = googleCloudService.uploadFile(file, userId);
             this.userRepository.updateImageUrl(userId, imageUrl);
 
         } catch (Exception e) {
