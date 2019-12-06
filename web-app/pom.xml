@@ -15,8 +15,6 @@
 
     <artifactId>web-app</artifactId>
 
-    <packaging>war</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
