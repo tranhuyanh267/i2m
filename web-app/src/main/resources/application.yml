@@ -1,8 +1,8 @@
 spring:
   datasource:
     username: ${MYSQL_USERNAME:root}
-    password: ${MYSQL_PASSWORD:123456789}
-    url: jdbc:mysql://${MYSQL_URL:localhost}:3306/i2m
+    password: ${MYSQL_PASSWORD:123456}
+    url: jdbc:mysql://${MYSQL_URL:35.221.251.75}:3306/i2m
     sqlScriptEncoding: UTF-8
 
   servlet:
