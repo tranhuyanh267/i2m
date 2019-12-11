@@ -1,6 +1,7 @@
 package web.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,7 @@ public class UserService {
         try {
             String imageUrl = googleCloudService.uploadFile(file, userId);
             this.userRepository.updateImageUrl(userId, imageUrl);
+
         } catch (Exception e) {
             return false;
         }

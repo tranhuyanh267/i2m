@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import web.services.CommentService;
 
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping("api/comments")
@@ -20,8 +22,11 @@ public class CommentApi {
 
     @GetMapping("/update")
     public void updateComments() {
-        commentService.updateCommentPrediction();
+        commentService.readFromJson();
     }
 
-
+    @GetMapping("/toJson")
+    public void writeToJson() throws IOException {
+        commentService.writeCommentToJson();
+    }
 }

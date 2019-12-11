@@ -104,4 +104,8 @@ public class PackService {
     public List<Pack> findPackByInfluencer(String influencerId) {
         return this.packRepository.findByInfluencerId(influencerId);
     }
+
+    public Pack findByName(String name) {
+        return this.packRepository.findByName(name);
+    }
 }

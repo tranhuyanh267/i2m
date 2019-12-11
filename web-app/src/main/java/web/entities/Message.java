@@ -32,6 +32,7 @@ public class Message {
     private boolean isSended;
     private String fileUrl;
     private String fileName;
+
     @ManyToOne()
     @JoinColumn(name = "mail_id")
     private MailBox mailBox;

@@ -13,4 +13,6 @@ public interface PackRepository extends CrudRepository<Pack, String> {
 
     @Query(value = "select p.* from influencer_pack ip inner join pack p on ip.pack_id = p.id where influencer_id = ?1", nativeQuery = true)
     List<Pack> findByInfluencerId(String influencerId);
+
+    Pack findByName(String name);
 }

@@ -2,11 +2,13 @@ package web.apis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.dtos.InfluencerDto;
 import web.dtos.PackDto;
 import web.entities.Pack;
 import web.entities.User;
+import web.exceptions.WebApiReponse;
 import web.payload.DeleteInfluencerRequest;
 import web.payload.PackDetail;
 import web.security.CurrentUser;
@@ -32,13 +34,16 @@ public class PackApi {
     }
 
     @PostMapping
-    public Pack create(@CurrentUser UserPrincipal userPrincipal, @RequestBody PackDto packDto) {
+    public ResponseEntity<?> create(@CurrentUser UserPrincipal userPrincipal, @RequestBody PackDto packDto) {
+        if(this.packService.findByName(packDto.getName()) != null) {
+            return ResponseEntity.badRequest().body(new WebApiReponse(false, "pack_name_existed"));
+        }
         Pack pack = new Pack();
         BeanUtils.copyProperties(packDto, pack);
         User user = new User();
         user.setId(userPrincipal.getId());
         pack.setUser(user);
-        return this.packService.create(pack);
+        return ResponseEntity.ok(this.packService.create(pack));
     }
 
     @PutMapping("{id}")
