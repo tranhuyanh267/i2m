@@ -19,9 +19,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Log4j2
 @Component
@@ -53,14 +56,19 @@ public class FeedCrawler {
 
                 instagramFeedRepository.saveAll(responses);
 
-                nodes.stream()
+                Stream<InstagramFeed> instagramFeedStream = nodes.stream()
                         .limit(12)
-                        .map(this::mapping)
-                        .forEach(feed -> {
-                            FeedIdMessage feedIdMessage = new FeedIdMessage();
-                            feedIdMessage.setFeedId(feed.getId());
-                            rabbitTemplate.convertAndSend("feed-id-queue", feedIdMessage);
-                        });
+                        .map(this::mapping);
+
+
+                Optional<InstagramFeed> max = instagramFeedStream.max(Comparator.comparingInt(InstagramFeed::getCommentCount));
+                if (max.isPresent()) {
+                    InstagramFeed feed = max.get();
+                    FeedIdMessage feedIdMessage = new FeedIdMessage();
+                    feedIdMessage.setFeedId(feed.getId());
+                    rabbitTemplate.convertAndSend("feed-id-queue", feedIdMessage);
+                }
+
 
             } else {
                 log.error(status);

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +40,6 @@ public class LatestPostHandler {
         try {
             log.info("Handle Latest Post " + instagramUser.getId());
             List<InstagramFeed> lastestFeeds = instagramFeedRepository.findFirst12ByInstagramUserIdOrderByTakenAtDesc(instagramUser.getId());
-            List<Comment> commentBatch = new ArrayList<>();
             if (lastestFeeds.size() > 0) {
                 List<Post> latestPosts = new ArrayList<>();
                 for (int i = 0; i < lastestFeeds.size(); i++) {
@@ -52,19 +52,33 @@ public class LatestPostHandler {
                     latestPosts.add(post);
 
 
-                    List<InstagramComment> comments = instagramCommentRepository.findByFeedId(feed.getId());
-                    if (!CollectionUtils.isEmpty(comments)) {
-                        List<Comment> collect = comments.stream().map(comment -> {
-                            Comment c = new Comment();
-                            c.setId(comment.getId());
-                            c.setContent(comment.getContent());
-                            c.setPostId(post.getId());
-                            return c;
-                        }).collect(Collectors.toList());
-                        commentBatch.addAll(collect);
-                    }
+//                    List<InstagramComment> comments = instagramCommentRepository.findByFeedId(feed.getId());
+//                    if (!CollectionUtils.isEmpty(comments)) {
+//                        List<Comment> collect = comments.stream().map(comment -> {
+//                            Comment c = new Comment();
+//                            c.setId(comment.getId());
+//                            c.setContent(comment.getContent());
+//                            c.setPostId(post.getId());
+//                            return c;
+//                        }).collect(Collectors.toList());
+//                        commentBatch.addAll(collect);
+//                    }
                 }
-                commentRepository.saveAll(commentBatch);
+
+                Optional<Post> max = latestPosts.stream().max(Comparator.comparingInt(Post::getCommentCount));
+                if (max.isPresent()) {
+                    Post post = max.get();
+                    List<InstagramComment> comments = instagramCommentRepository.findByFeedId(post.getId());
+                    List<Comment> collect = comments.stream().map(comment -> {
+                        Comment c = new Comment();
+                        c.setId(comment.getId());
+                        c.setContent(comment.getContent());
+                        c.setPostId(post.getId());
+                        return c;
+                    }).collect(Collectors.toList());
+                    commentRepository.saveAll(collect);
+                }
+
                 postRepository.saveAll(latestPosts);
 
                 Optional<Influencer> influencerOptional = influencerRepository.findById(instagramUser.getId());
