@@ -23,10 +23,8 @@ public class GoogleCloudService {
     private String credentialPath;
 
     public String uploadFile(MultipartFile file, String fileName) throws IOException {
-        Resource resource = new ClassPathResource(credentialPath);
-        File credentialsFile = resource.getFile();
         Credentials credentials = GoogleCredentials
-                .fromStream(new FileInputStream(credentialsFile));
+                .fromStream(new FileInputStream(new File(credentialPath)));
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials)
                 .setProjectId("I2M-Authentication").build().getService();
         //File Rename

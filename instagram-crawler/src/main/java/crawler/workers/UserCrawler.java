@@ -53,7 +53,7 @@ public class UserCrawler {
             categories.add(instagramUser.getCategory());
             instagramUser.setCategories(categories);
             if (instagramUser.getCategory() == null || instagramUser.getCategory().length() == 0) {
-                instagramUser.setCategories(Collections.singletonList("Special"));
+                instagramUser.setCategories(Collections.singletonList("Entertainment"));
             }
             instagramUserRepository.save(instagramUser);
 

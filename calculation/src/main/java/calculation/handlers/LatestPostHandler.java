@@ -15,10 +15,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.MalformedParameterizedTypeException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,6 +38,7 @@ public class LatestPostHandler {
         try {
             log.info("Handle Latest Post " + instagramUser.getId());
             List<InstagramFeed> lastestFeeds = instagramFeedRepository.findFirst12ByInstagramUserIdOrderByTakenAtDesc(instagramUser.getId());
+            Map<String, String> ids = new HashMap<>();
             if (lastestFeeds.size() > 0) {
                 List<Post> latestPosts = new ArrayList<>();
                 for (int i = 0; i < lastestFeeds.size(); i++) {
@@ -50,6 +49,8 @@ public class LatestPostHandler {
                     post.setInfluencerId(instagramUser.getId());
                     post.setType("LATEST");
                     latestPosts.add(post);
+
+                    ids.put(feed.getId(), post.getId());
 
 
 //                    List<InstagramComment> comments = instagramCommentRepository.findByFeedId(feed.getId());
@@ -65,15 +66,15 @@ public class LatestPostHandler {
 //                    }
                 }
 
-                Optional<Post> max = latestPosts.stream().max(Comparator.comparingInt(Post::getCommentCount));
+                Optional<InstagramFeed> max = lastestFeeds.stream().max(Comparator.comparingInt(InstagramFeed::getCommentCount));
                 if (max.isPresent()) {
-                    Post post = max.get();
+                    InstagramFeed post = max.get();
                     List<InstagramComment> comments = instagramCommentRepository.findByFeedId(post.getId());
                     List<Comment> collect = comments.stream().map(comment -> {
                         Comment c = new Comment();
                         c.setId(comment.getId());
                         c.setContent(comment.getContent());
-                        c.setPostId(post.getId());
+                        c.setPostId(ids.get(post.getId()));
                         return c;
                     }).collect(Collectors.toList());
                     commentRepository.saveAll(collect);
