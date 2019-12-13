@@ -47,19 +47,24 @@ public class PackApi {
     }
 
     @PutMapping("{id}")
-    public PackDetail update(@PathVariable("id") String id, @RequestBody PackDto packDto) {
+    public ResponseEntity<?> update(@PathVariable("id") String id, @RequestBody PackDto packDto) {
+        if(this.packService.findByName(packDto.getName()) != null) {
+            return ResponseEntity.badRequest().body(new WebApiReponse(false, "pack_name_existed"));
+        }
         Pack pack = new Pack();
         BeanUtils.copyProperties(packDto, pack);
-        return this.packService.update(id, pack);
+        return ResponseEntity.ok(this.packService.update(id, pack));
     }
 
     @PostMapping("{id}")
-    public PackDetail removeAnInfluencer(@PathVariable("id") String id, @RequestBody DeleteInfluencerRequest request) {
+    public PackDetail removeAnInfluencer(@PathVariable("id") String id, @CurrentUser UserPrincipal userPrincipal, @RequestBody DeleteInfluencerRequest request) {
+
         if(request.isDeleteAll()) {
             List<Pack> packs = packService.findPackByInfluencer(request.getInfluencerId());
+            List<Pack> newPacks = packs.stream().filter(p ->  p.getUser().getId().equals(userPrincipal.getId())).collect(Collectors.toList());
             for (Pack p:
-                 packs) {
-                if(p.getId() != id) {
+                    newPacks) {
+                if(!p.getId().equals(id)) {
                     this.packService.removeAnInfluencer(p.getId(), request.getInfluencerId());
                 }
             }

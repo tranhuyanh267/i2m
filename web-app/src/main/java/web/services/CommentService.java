@@ -9,6 +9,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
+import javafx.geometry.Pos;
 import lombok.AllArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.BeanUtils;
@@ -16,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.dtos.CommentDto;
 import web.entities.Comment;
+import web.entities.Influencer;
 import web.entities.Post;
 import web.repositories.CommentRepository;
+import web.repositories.InfluencerRepository;
 import web.repositories.PostRepository;
 
 import java.io.IOException;
@@ -25,18 +28,20 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CommentService {
 
-    @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
     private PostRepository postRepository;
+
+    private InfluencerRepository influencerRepository;
 
 //    public void updateCommentPrediction() {
 //        Properties props = new Properties();
@@ -103,20 +108,37 @@ public class CommentService {
 
     public void writeCommentToJson() throws IOException {
         JSONObject arrayData = new JSONObject();
-        List<Post> posts = postRepository.findAll();
+        List<Influencer> influencers = influencerRepository.findAll();
+
         int count = 0;
-        for (Post p:
-             posts) {
+        for (Influencer influencer:
+             influencers) {
             count++;
-            List<Comment> comments = commentRepository.findByPostId(p.getId());
-            List<String> contents = new ArrayList<>();
-            comments.forEach(c -> contents.add(c.getContent()));
-            String text = String.join(". ", contents);
-            System.out.println("count " + count);
-            JSONObject sampleObject = new JSONObject();
-            sampleObject.put("id", p.getId());
-            sampleObject.put("comment", text);
-            arrayData.put(p.getId(), sampleObject);
+            List<Post> posts = influencer.getPosts();
+            List<Post> latestPosts = new ArrayList<>();
+            posts.forEach(p -> {
+                if(p.getType().trim().equals("LATEST")) {
+                    latestPosts.add(p);
+                }
+            });
+
+            System.out.println("Size " + latestPosts.size());
+            Optional<Post> max = latestPosts.stream().max(Comparator.comparingInt(Post::getCommentCount));
+            if(max.isPresent()) {
+                Post p = max.get();
+                List<Comment> comments = commentRepository.findByPostId(p.getId());
+                List<String> contents = new ArrayList<>();
+                comments.forEach(c -> contents.add(c.getContent()));
+                String text = String.join(". ", contents);
+
+                System.out.println("Handle " + count + " " + text);
+                JSONObject sampleObject = new JSONObject();
+                sampleObject.put("id", p.getId());
+                sampleObject.put("comment", text);
+                arrayData.put(p.getId(), sampleObject);
+            }
+
+
         }
 
         Files.write(Paths.get("classified_comments.json"), arrayData.toJSONString().getBytes());
@@ -128,11 +150,19 @@ public class CommentService {
         InputStream inputStream = TypeReference.class.getResourceAsStream("/json/comment.json");
         try {
             List<CommentDto> comments = mapper.readValue(inputStream,typeReference);
-            comments.forEach((c) -> {
-                Post p = postRepository.findById(c.getId()).orElse(null);
-                p.setPrediction(c.getPrediction());
-                postRepository.save(p);
-            });
+            List<Post> posts = new ArrayList<>();
+            int count = 0;
+            for (CommentDto c:
+                 comments) {
+                count++;
+                if(c.getComment() != "") {
+                    System.out.println("Handle " + c.getId() + " count " + count);
+                    Post p = postRepository.findById(c.getId()).orElse(null);
+                    p.setPrediction(c.getPrediction());
+                    postRepository.save(p);
+                }
+            }
+
             System.out.println("Comments Saved!");
         } catch (IOException e){
             System.out.println("Unable to save comment: " + e.getMessage());

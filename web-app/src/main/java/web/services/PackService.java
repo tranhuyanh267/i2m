@@ -38,9 +38,9 @@ public class PackService {
 
     public Pack getDetails(String id) {
         Pack pack = this.packRepository.findById(id).orElse(null);
-        if (pack != null) {
-            pack.setUser(null);
-        }
+//        if (pack != null) {
+//            pack.setUser(null);
+//        }
         return pack;
     }
 
@@ -78,10 +78,10 @@ public class PackService {
         pack.getInfluencers().forEach(in -> {
             in.setPosts(null);
             List<Pack> packs = this.findPackByInfluencer(in.getId());
-
+            List<Pack> newPacks = packs.stream().filter(p -> p.getUser().getId() == pack.getUser().getId()).collect(Collectors.toList());
             InfluencerDto influencerDto = new InfluencerDto();
             BeanUtils.copyProperties(in, influencerDto);
-            influencerDto.setPacks(packs.stream().map(p -> new PackDto(p.getName())).collect(Collectors.toList()));
+            influencerDto.setPacks(newPacks.stream().map(p -> new PackDto(p.getName())).collect(Collectors.toList()));
             influencerDtos.add(influencerDto);
 
         });
