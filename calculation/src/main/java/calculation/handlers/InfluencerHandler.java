@@ -30,7 +30,7 @@ class InfluencerHandler {
     private EventBus eventBus;
     private RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = "instagram-user-queue", containerFactory = "lastestPostContainerFactory")
+    @RabbitListener(queues = "instagram-user-queue", containerFactory = "influencerContainerFactory")
     public void handler(InstagramUser instagramUser) {
         try {
             log.info("Handle influencer " + instagramUser.getId());

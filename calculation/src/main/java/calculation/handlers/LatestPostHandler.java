@@ -1,5 +1,4 @@
 package calculation.handlers;
-
 import calculation.documents.InstagramComment;
 import calculation.documents.InstagramFeed;
 import calculation.documents.InstagramUser;
@@ -13,12 +12,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.*;
 import java.util.stream.Collectors;
-
 @Component
 @AllArgsConstructor
 @Log4j
@@ -29,8 +24,7 @@ public class LatestPostHandler {
     private RabbitTemplate rabbitTemplate;
     private CommentRepository commentRepository;
     private InstagramCommentRepository instagramCommentRepository;
-
-    @RabbitListener(queues = "latest-post-queue")
+    @RabbitListener(queues = "latest-post-queue", containerFactory = "lastestPostContainerFactory")
     public void handler(InstagramUser instagramUser) {
         if (instagramUser.getMediaCount() <= 0 || instagramUser.isPrivate() || instagramUser.getFollowers() <= 0) {
             return;
@@ -49,10 +43,7 @@ public class LatestPostHandler {
                     post.setInfluencerId(instagramUser.getId());
                     post.setType("LATEST");
                     latestPosts.add(post);
-
                     ids.put(feed.getId(), post.getId());
-
-
 //                    List<InstagramComment> comments = instagramCommentRepository.findByFeedId(feed.getId());
 //                    if (!CollectionUtils.isEmpty(comments)) {
 //                        List<Comment> collect = comments.stream().map(comment -> {
@@ -65,7 +56,6 @@ public class LatestPostHandler {
 //                        commentBatch.addAll(collect);
 //                    }
                 }
-
                 Optional<InstagramFeed> max = lastestFeeds.stream().max(Comparator.comparingInt(InstagramFeed::getCommentCount));
                 if (max.isPresent()) {
                     InstagramFeed post = max.get();
@@ -79,9 +69,7 @@ public class LatestPostHandler {
                     }).collect(Collectors.toList());
                     commentRepository.saveAll(collect);
                 }
-
                 postRepository.saveAll(latestPosts);
-
                 Optional<Influencer> influencerOptional = influencerRepository.findById(instagramUser.getId());
                 if (influencerOptional.isPresent()) {
                     Influencer influencer = influencerOptional.get();
