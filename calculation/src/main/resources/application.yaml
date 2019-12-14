@@ -10,7 +10,7 @@ spring:
       uri: mongodb://35.234.201.158:27017/i2m
 
   rabbitmq:
-    host: 35.240.145.156
+    host: 35.240.182.63
     port: 30069
     username: admin
     password: grove1234
