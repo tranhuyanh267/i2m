@@ -19,6 +19,6 @@ public class ReportApi {
 
     @GetMapping("/{id}")
     public List<Report> fetchFollowersChart(@PathVariable(value = "id") String influencerId) {
-        return reportRepository.findByInfluencerIdOrderByCreatedDate(influencerId);
+        return reportRepository.findReportByInfluencer(influencerId);
     }
 }

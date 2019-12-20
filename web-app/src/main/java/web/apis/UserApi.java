@@ -80,9 +80,11 @@ public class UserApi {
             @PathVariable(value = "userId") String userId,
             @Valid @RequestBody UserUpdateModel newUser
     ) {
-        if (userService.updateUser(newUser, userId) == null)
+        User user = userService.updateUser(newUser, userId);
+        if (user == null)
             return ResponseEntity.badRequest().body(new WebApiReponse(false, "Update user failed."));
-        return ResponseEntity.ok(new WebApiReponse(true, "Update user success"));
+
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{userId}/update-password")
