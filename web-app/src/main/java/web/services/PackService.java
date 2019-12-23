@@ -105,7 +105,8 @@ public class PackService {
         return this.packRepository.findByInfluencerId(influencerId);
     }
 
-    public Pack findByName(String name) {
-        return this.packRepository.findByName(name);
+    public boolean findByNameAndUserId(String name, String userId) {
+        Optional<Pack> optPack = this.packRepository.findByNameAndUserId(name,userId);
+        return optPack.isPresent();
     }
 }

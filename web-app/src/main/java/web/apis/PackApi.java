@@ -35,7 +35,7 @@ public class PackApi {
 
     @PostMapping
     public ResponseEntity<?> create(@CurrentUser UserPrincipal userPrincipal, @RequestBody PackDto packDto) {
-        if(this.packService.findByName(packDto.getName()) != null) {
+        if(this.packService.findByNameAndUserId(packDto.getName(), userPrincipal.getId())) {
             return ResponseEntity.badRequest().body(new WebApiReponse(false, "pack_name_existed"));
         }
         Pack pack = new Pack();
@@ -47,8 +47,8 @@ public class PackApi {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> update(@PathVariable("id") String id, @RequestBody PackDto packDto) {
-        if(this.packService.findByName(packDto.getName()) != null) {
+    public ResponseEntity<?> update(@PathVariable("id") String id,@CurrentUser UserPrincipal userPrincipal, @RequestBody PackDto packDto) {
+        if(this.packService.findByNameAndUserId(packDto.getName(),userPrincipal.getId())) {
             return ResponseEntity.badRequest().body(new WebApiReponse(false, "pack_name_existed"));
         }
         Pack pack = new Pack();

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import web.entities.Pack;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PackRepository extends CrudRepository<Pack, String> {
@@ -15,4 +16,6 @@ public interface PackRepository extends CrudRepository<Pack, String> {
     List<Pack> findByInfluencerId(String influencerId);
 
     Pack findByName(String name);
+
+    Optional<Pack> findByNameAndUserId(String name, String userId);
 }
