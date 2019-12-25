@@ -21,10 +21,10 @@ public interface InfluencerRepository extends JpaRepository<Influencer, String> 
                                       @Param("maxFollowers") int maxFollowers, @Param("minEngagement") float minEngagement,
                                       @Param("maxEngagement") float maxEngagement, Pageable pageable);
 
-    @Query(value = "select * from influencer i inner join influencer_category ic on ic.influencer_id = i.id where ic.category_id in (?5) and (i.followers between ?1 and ?2) and (i.engagement between ?3 and ?4) and  (i.username like %?6% or i.full_name like %?6%) and is_authentic = true", nativeQuery = true)
+    @Query(value = "select * from influencer i where id in (select distinct id from influencer i inner join influencer_category ic on ic.influencer_id = i.id where ic.category_id in (?5) and (i.followers between ?1 and ?2) and (i.engagement between ?3 and ?4) and  (i.username like %?6% or i.full_name like %?6%) and is_authentic = true)", nativeQuery = true)
     Page<Influencer> filterInfluencerHasCategories(int minFollowers,
                                       int maxFollowers, float minEngagement,
-                                      float maxEngagement, String[] categories,@Param("search") String search,  Pageable pageable);
+                                      float maxEngagement, String[] categories, String search,  Pageable pageable);
 
     @Query(value = "select * from influencer v where (v.username like %?1% or v.full_name like %?1%) and v.is_authentic = true", nativeQuery = true)
     Page<Influencer> findByUsernameAndFullName(String username, Pageable pageable);
